@@ -68,6 +68,17 @@ check "validate: unwritable --svrl path exits 2" 2 "$rc"
 check "validate: unwritable --svrl has no traceback" 0 \
     "$(printf '%s' "$out" | grep -c 'Traceback')"
 
+# --- assert hygiene: @id and @see are mandatory, not conventions --------------
+
+out=$("$root/bin/saip-validate" "$root/tests/fixtures/no-id" \
+      "$root/tests/fixtures/valid-minimal.xml" 2>&1)
+rc=$?
+check "validate: assert without @id is rejected" 2 "$rc"
+check "validate: names the offending rule context" 1 \
+    "$(printf '%s' "$out" | grep -c "context '/ProfilePackage'")"
+check "validate: rejection has no traceback" 0 \
+    "$(printf '%s' "$out" | grep -c 'Traceback')"
+
 # --- composition rules -------------------------------------------------------
 #
 # Each counter-example asserts the exact set of rule ids that fired, not a
@@ -89,6 +100,33 @@ fires_exactly() {
 fires_exactly no-header.xml        SAIP-HDR-01
 fires_exactly two-headers.xml      SAIP-HDR-01
 fires_exactly header-not-first.xml SAIP-HDR-02
+
+# --- coverage: every declared rule id fires in some fixture ------------------
+#
+# fires_exactly above is hardcoded per fixture, so a rule nobody wrote a
+# fixture for is invisible to it: the id is simply never mentioned. This check
+# makes the plan's constraint -- every rule ships with a fixture that makes it
+# fire -- executable rather than a promise: the set of ids declared in
+# rules/*.sch must equal the set the fixtures actually trip.
+
+declared_ids() {
+    grep -ohE 'id="SAIP-[A-Z]+-[0-9]+"' "$root"/rules/*.sch \
+        | sed -E 's/id="([^"]+)"/\1/' | sort -u
+}
+
+fired_ids_any_fixture() {
+    for xml in "$root"/tests/fixtures/*.xml; do
+        "$root/bin/saip-validate" "$root/rules" "$xml" 2>&1
+    done | grep -oE 'SAIP-[A-Z]+-[0-9]+' | sort -u
+}
+
+declared_tmp=$(mktemp)
+fired_tmp=$(mktemp)
+declared_ids > "$declared_tmp"
+fired_ids_any_fixture > "$fired_tmp"
+missing=$(comm -23 "$declared_tmp" "$fired_tmp")
+rm -f "$declared_tmp" "$fired_tmp"
+check "rules: every declared rule id fires in some fixture" "" "$missing"
 
 "$root/bin/saip-validate" "$root/rules" \
     "$root/tests/fixtures/valid-minimal.xml" >/dev/null 2>&1

@@ -57,16 +57,21 @@ def assert_index(schema):
     Returns (all_asserts, evaluable_asserts, id_to_see) where all_asserts includes
     every assert in the schema (for total count), evaluable_asserts includes only
     those from the first rule per context per pattern (for evaluated count), and
-    id_to_see maps assertion ids to their @see attributes.
+    id_to_see maps assertion ids to their @see attributes. Both index dicts are
+    keyed by (pattern, context), not context alone: two patterns sharing a
+    context are a real case (see above), and collapsing them onto one key would
+    make the per-key lists mean nothing to anyone reading this index later.
     """
     all_asserts = {}
     evaluable_asserts = {}
     id_to_see = {}
 
     for pattern in schema.iter(f"{SCH}pattern"):
+        pattern_key = pattern.get("id") or id(pattern)
         seen_contexts = set()
         for rule in pattern.findall(f"{SCH}rule"):
             context = rule.get("context")
+            key = (pattern_key, context)
             ids = [
                 a.get("id")
                 for a in rule
@@ -79,14 +84,39 @@ def assert_index(schema):
                     id_to_see[a.get("id")] = a.get("see")
 
             # All asserts count toward total
-            all_asserts.setdefault(context, []).extend(ids)
+            all_asserts.setdefault(key, []).extend(ids)
 
             # Only first rule's asserts per context per pattern can be evaluated
             if context not in seen_contexts:
                 seen_contexts.add(context)
-                evaluable_asserts.setdefault(context, []).extend(ids)
+                evaluable_asserts.setdefault(key, []).extend(ids)
 
     return all_asserts, evaluable_asserts, id_to_see
+
+
+def find_missing_attrs(schema):
+    """Every assert and report must carry @id and @see (see the design note on
+    rule ids). Return one message per offender, naming its rule's context, or
+    an empty list if the schema is clean.
+
+    Checked once, before the schema is handed to the processor: an id-less
+    assert used to crash the report formatter later, and both id-less and
+    see-less asserts were silently uncounted rather than rejected.
+    """
+    problems = []
+    for rule in schema.iter(f"{SCH}rule"):
+        context = rule.get("context")
+        for a in rule:
+            if a.tag not in (f"{SCH}assert", f"{SCH}report"):
+                continue
+            kind = "assert" if a.tag == f"{SCH}assert" else "report"
+            if not a.get("id"):
+                problems.append(f"{kind} without @id in context '{context}'")
+            elif not a.get("see"):
+                problems.append(
+                    f"{kind} '{a.get('id')}' without @see in context '{context}'"
+                )
+    return problems
 
 
 def main(argv):
@@ -114,12 +144,31 @@ def main(argv):
     try:
         schema = load_rules(rules_dir)
         document = etree.parse(doc_path)
-    except (OSError, etree.XMLSyntaxError) as exc:
+    except (OSError, etree.LxmlError) as exc:
         print(f"{argv[0]}: {exc}", file=sys.stderr)
         return 2
 
-    validator = isoschematron.Schematron(schema, store_report=True)
-    validator.validate(document)
+    # An assert without @id used to reach the report formatter and crash
+    # there; one without @see is an opinion, per the design note on rule ids.
+    # Refuse the rule set outright rather than count it wrong or fall over
+    # later.
+    problems = find_missing_attrs(schema)
+    if problems:
+        print(f"{argv[0]}: invalid rule set:", file=sys.stderr)
+        for problem in problems:
+            print(f"  {problem}", file=sys.stderr)
+        return 2
+
+    # A broken rule set -- an XPath that does not compile, an undefined
+    # namespace prefix, a .sch that is not Schematron at all -- must not look
+    # like a bad profile. Both raise lxml errors, one at construction and one
+    # only once the transform actually runs; catch both here in one place.
+    try:
+        validator = isoschematron.Schematron(schema, store_report=True)
+        validator.validate(document)
+    except etree.LxmlError as exc:
+        print(f"{argv[0]}: invalid rule set: {exc}", file=sys.stderr)
+        return 2
     report = validator.validation_report
 
     if svrl_path:
@@ -133,7 +182,9 @@ def main(argv):
     all_asserts, evaluable_asserts, id_to_see = assert_index(schema)
     total = sum(len(v) for v in all_asserts.values())
     fired = {r.get("context") for r in report.iter(f"{SVRL}fired-rule")}
-    evaluated = sum(len(ids) for ctx, ids in evaluable_asserts.items() if ctx in fired)
+    evaluated = sum(
+        len(ids) for (_, ctx), ids in evaluable_asserts.items() if ctx in fired
+    )
 
     errors = warnings = 0
     lines = []
