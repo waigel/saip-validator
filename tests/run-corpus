@@ -7,7 +7,8 @@
 #
 # A rule that flags published reference material is either wrong or has found
 # something real. Both are worth knowing the moment they happen, and neither is
-# visible without this run.
+# visible without this run. That includes warnings: validation runs --strict,
+# so a role="warning" rule firing here fails the corpus too.
 set -u
 here=$(dirname "$0")
 root=$(cd "$here/.." && pwd)
@@ -23,6 +24,11 @@ command -v "$EPT" >/dev/null 2>&1 || {
     echo "$0: '$EPT' not on PATH; set EPT=<path to ept>" >&2
     exit 2
 }
+
+if [ ! -d "$1" ]; then
+    echo "$0: no such directory: $1" >&2
+    exit 2
+fi
 
 found=0
 bad=0
@@ -45,15 +51,26 @@ for der in "$1"/*.der; do
         continue
     }
 
-    trap "rm -f '$xer_tmp' '$pkg_tmp'" EXIT
-
-    # Stage 1: convert DER to XER
-    if ! "$EPT" -iber -oxer -p ProfileElement "$der" > "$xer_tmp" 2>&1; then
+    err_tmp=$(mktemp) || {
+        rm -f "$xer_tmp" "$pkg_tmp"
         echo "FAIL $(basename "$der")"
-        sed 's/^/     /' "$xer_tmp"
+        echo "     cannot create temp file" >&2
+        bad=$((bad + 1))
+        continue
+    }
+
+    trap "rm -f '$xer_tmp' '$pkg_tmp' '$err_tmp'" EXIT
+
+    # Stage 1: convert DER to XER. stderr stays out of xer_tmp: on a truncated
+    # or otherwise malformed DER, ept still writes whatever it decoded before
+    # failing to stdout, and merging the streams would bury the one-line error
+    # under a partial profile dump in the FAIL report.
+    if ! "$EPT" -iber -oxer -p ProfileElement "$der" > "$xer_tmp" 2>"$err_tmp"; then
+        echo "FAIL $(basename "$der")"
+        sed 's/^/     /' "$err_tmp"
         bad=$((bad + 1))
         trap - EXIT
-        rm -f "$xer_tmp" "$pkg_tmp"
+        rm -f "$xer_tmp" "$pkg_tmp" "$err_tmp"
         continue
     fi
 
@@ -63,21 +80,36 @@ for der in "$1"/*.der; do
         sed 's/^/     /' "$pkg_tmp"
         bad=$((bad + 1))
         trap - EXIT
-        rm -f "$xer_tmp" "$pkg_tmp"
+        rm -f "$xer_tmp" "$pkg_tmp" "$err_tmp"
         continue
     fi
 
-    # Stage 3: validate
-    if "$root/bin/saip-validate" "$root/rules" "$pkg_tmp" > /dev/null 2>&1; then
-        echo "ok   $(basename "$der")"
-    else
+    # Stage 3: validate, once. --strict promotes warnings to failures (see
+    # header). An exit of 0 is not enough on its own: a rule set that ran no
+    # assertions at all -- every context typo'd, say -- also exits 0, and that
+    # is not the same thing as a clean profile.
+    out=$("$root/bin/saip-validate" --strict "$root/rules" "$pkg_tmp" 2>&1)
+    rc=$?
+    evaluated=$(printf '%s\n' "$out" \
+        | grep -oE ' [0-9]+ of [0-9]+ assertions evaluated' \
+        | grep -oE '[0-9]+' | head -1)
+    evaluated=${evaluated:-0}
+
+    if [ "$rc" -ne 0 ]; then
         echo "FAIL $(basename "$der")"
-        "$root/bin/saip-validate" "$root/rules" "$pkg_tmp" 2>&1 | sed 's/^/     /'
+        printf '%s\n' "$out" | sed 's/^/     /'
         bad=$((bad + 1))
+    elif [ "$evaluated" -eq 0 ]; then
+        echo "FAIL $(basename "$der")"
+        echo "     no assertion was evaluated"
+        printf '%s\n' "$out" | sed 's/^/     /'
+        bad=$((bad + 1))
+    else
+        echo "ok   $(basename "$der")"
     fi
 
     trap - EXIT
-    rm -f "$xer_tmp" "$pkg_tmp"
+    rm -f "$xer_tmp" "$pkg_tmp" "$err_tmp"
 done
 
 if [ "$found" -eq 0 ]; then
