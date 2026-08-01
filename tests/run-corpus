@@ -1,0 +1,50 @@
+#!/bin/sh
+# Every profile in a directory must pass every rule.
+#
+# The corpus is not in this repository -- those files belong to their
+# publishers -- so the directory is named on the command line, the way
+# asn1c-vn takes DERDIR.
+#
+# A rule that flags published reference material is either wrong or has found
+# something real. Both are worth knowing the moment they happen, and neither is
+# visible without this run.
+set -u
+here=$(dirname "$0")
+root=$(cd "$here/.." && pwd)
+: "${EPT:=ept}"
+
+if [ $# -ne 1 ]; then
+    echo "usage: $0 <dir-with-*.der>" >&2
+    echo "  EPT=<path> overrides the converter, default 'ept'" >&2
+    exit 2
+fi
+
+command -v "$EPT" >/dev/null 2>&1 || {
+    echo "$0: '$EPT' not on PATH; set EPT=<path to ept>" >&2
+    exit 2
+}
+
+found=0
+bad=0
+for der in "$1"/*.der; do
+    [ -f "$der" ] || continue
+    found=$((found + 1))
+    if "$EPT" -iber -oxer -p ProfileElement "$der" 2>/dev/null \
+        | "$root/bin/saip-wrap" \
+        | "$root/bin/saip-validate" "$root/rules" /dev/stdin > /tmp/saip-corpus.$$ 2>&1
+    then
+        echo "ok   $(basename "$der")"
+    else
+        echo "FAIL $(basename "$der")"
+        sed 's/^/     /' /tmp/saip-corpus.$$
+        bad=$((bad + 1))
+    fi
+    rm -f /tmp/saip-corpus.$$
+done
+
+if [ "$found" -eq 0 ]; then
+    echo "$0: no *.der in $1" >&2
+    exit 2
+fi
+echo "$((found - bad)) of $found profile(s) clean"
+[ "$bad" -eq 0 ]
