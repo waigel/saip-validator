@@ -1,0 +1,36 @@
+#!/bin/sh
+# Test driver. Every check prints one line; a failure sets the exit code.
+set -u
+here=$(dirname "$0")
+root=$(cd "$here/.." && pwd)
+fail=0
+
+check() {
+    name=$1; expected=$2; actual=$3
+    if [ "$expected" = "$actual" ]; then
+        echo "ok   $name"
+    else
+        echo "FAIL $name"
+        echo "     expected: $expected"
+        echo "     actual:   $actual"
+        fail=1
+    fi
+}
+
+# --- saip-wrap ---------------------------------------------------------------
+
+wrapped=$("$root/bin/saip-wrap" < "$root/tests/fixtures/two-elements.xer")
+
+check "wrap: one root element" 1 \
+    "$(printf '%s' "$wrapped" | grep -c '<ProfilePackage>')"
+check "wrap: both elements kept" 2 \
+    "$(printf '%s' "$wrapped" | grep -c '<ProfileElement>')"
+check "wrap: closes the root" 1 \
+    "$(printf '%s' "$wrapped" | grep -c '</ProfilePackage>')"
+check "wrap: output is well-formed" 0 \
+    "$(printf '%s' "$wrapped" | python3 -c 'import sys,xml.dom.minidom as m; m.parseString(sys.stdin.read())' >/dev/null 2>&1; echo $?)"
+
+printf '' | "$root/bin/saip-wrap" >/dev/null 2>&1
+check "wrap: empty input is an error" 2 "$?"
+
+exit $fail
