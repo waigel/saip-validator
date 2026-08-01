@@ -12,12 +12,12 @@
     <sch:rule context="/ProfilePackage">
       <sch:let name="headers" value="count(ProfileElement/header)"/>
 
-      <sch:assert id="SAIP-HDR-01" role="error" see="saip-3.4.1#8.2"
+      <sch:assert id="SAIP-HDR-01" role="error" see="saip-3.4.1#8.2.1"
                   test="$headers = 1">
         A profile package shall contain exactly one Profile Header.
       </sch:assert>
 
-      <sch:assert id="SAIP-HDR-02" role="error" see="saip-3.4.1#8.2"
+      <sch:assert id="SAIP-HDR-02" role="error" see="saip-3.4.1#8.2.1"
                   test="not($headers = 1) or ProfileElement[1]/header">
         The Profile Header shall be the first ProfileElement.
       </sch:assert>
