@@ -1,6 +1,7 @@
 # A business-rule validator for eUICC profile packages — design
 
-**Status:** agreed, not yet implemented
+**Status:** agreed; first increment planned in
+[../plans/2026-08-01-pipeline-and-first-rules.md](../plans/2026-08-01-pipeline-and-first-rules.md)
 **Date:** 2026-08-01
 **Normative reference:** TCA, *eUICC Profile Package: Interoperable Format
 Technical Specification* (SAIP), version 3.4.1
@@ -161,13 +162,25 @@ Points 2 and 3 use corpora that are not vendored here — they belong to their
 publishers — so the targets are pointed at a directory, the way `asn1c-vn` takes
 `DERDIR` and `VNDIR`.
 
-## Open questions
+## Decisions taken since
 
-- Which Schematron processor to depend on, and whether to vendor its skeleton.
-- Whether `saip-wrap` should be a shell wrapper around `ept` or a small program.
-- Whether rule ids should encode the SAIP clause (`SAIP-8.2-01`) or stay opaque
-  and carry the clause only in `@see`. Opaque ids survive a specification
-  renumbering; encoded ones read better.
+The three questions this document left open were settled while planning the
+first increment, each on a fact rather than a preference:
+
+- **Processor: `lxml.isoschematron`.** ISO Schematron, emits SVRL with the rule
+  id, role and location, needs no JVM, and lxml was already installed. The rules
+  stay plain `.sch`, so another processor can consume them.
+- **`saip-wrap` is a shell filter,** reading XER on standard input rather than
+  invoking `ept`. `ept -oxer` emits no XML declaration, so wrapping is
+  concatenation; keeping it a filter makes it testable without a profile.
+- **Rule ids stay opaque,** with the clause in `@see` alone. Reports, tests and
+  bug trackers cite ids, and a renumbered specification must not invalidate them.
+
+One thing above did not survive contact. `lxml.isoschematron` binds XSLT 1.0,
+which has no `xsl:function`, so the `saip:octets()` library described earlier
+cannot be written that way yet. `sch:let` covers per-rule locals, and two rules
+do not justify reaching for EXSLT. Revisit when a computation repeats across
+files, and change this document at the same time.
 
 ## Non-goals
 
