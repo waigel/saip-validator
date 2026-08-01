@@ -33,4 +33,27 @@ check "wrap: output is well-formed" 0 \
 printf '' | "$root/bin/saip-wrap" >/dev/null 2>&1
 check "wrap: empty input is an error" 2 "$?"
 
+# --- saip-validate -----------------------------------------------------------
+
+out=$("$root/bin/saip-validate" "$root/tests/fixtures" \
+      "$root/tests/fixtures/trips-one-rule.xml" 2>&1)
+rc=$?
+
+check "validate: exit 1 when an error fires" 1 "$rc"
+check "validate: names the failing rule" 1 "$(printf '%s' "$out" | grep -c 'TEST-ERR-01')"
+check "validate: names the warning" 1 "$(printf '%s' "$out" | grep -c 'TEST-WARN-01')"
+check "validate: counts one error" 1 \
+    "$(printf '%s' "$out" | grep -c '1 error, 1 warning')"
+check "validate: reports rules evaluated, not total" 1 \
+    "$(printf '%s' "$out" | grep -c '2 of 3 rules evaluated')"
+check "validate: says nothing about the rule that did not run" 0 \
+    "$(printf '%s' "$out" | grep -c 'TEST-NEVER-01')"
+
+"$root/bin/saip-validate" --svrl /dev/null "$root/tests/fixtures" \
+    "$root/tests/fixtures/trips-one-rule.xml" >/dev/null 2>&1
+check "validate: --svrl is accepted" 1 "$?"
+
+"$root/bin/saip-validate" "$root/tests/fixtures" /nonexistent.xml >/dev/null 2>&1
+check "validate: missing input is a usage error" 2 "$?"
+
 exit $fail
