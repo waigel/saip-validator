@@ -70,24 +70,25 @@ check "validate: unwritable --svrl has no traceback" 0 \
 
 # --- composition rules -------------------------------------------------------
 #
-# Each fixture must trip exactly the rule it is named for. A rule never seen to
-# fire is indistinguishable from one that cannot. The guard on SAIP-HDR-02
-# prevents double complaints when there is no header, so we assert both presence
-# and absence to lock in the guard's correctness.
+# Each counter-example asserts the exact set of rule ids that fired, not a
+# presence and one absence. This catches regressions where new rules are added
+# or a guard is removed, causing multiple complaints for one fault. A rule
+# never seen to fire is indistinguishable from one that cannot.
 
-fires() {
-    fixture=$1; expected=$2; unexpected=$3
-    output=$("$root/bin/saip-validate" "$root/rules" \
-             "$root/tests/fixtures/$fixture" 2>&1)
-    got_expected=$(printf '%s' "$output" | grep -c "^  $expected")
-    got_unexpected=$(printf '%s' "$output" | grep -c "^  $unexpected")
-    check "rules: $fixture fires $expected" 1 "$got_expected"
-    check "rules: $fixture does not fire $unexpected" 0 "$got_unexpected"
+# Every SAIP rule id the report names, sorted and space-separated.
+fired_ids() {
+    "$root/bin/saip-validate" "$root/rules" "$root/tests/fixtures/$1" 2>&1 \
+        | grep -oE 'SAIP-[A-Z]+-[0-9]+' | sort -u | tr '\n' ' '
 }
 
-fires no-header.xml        SAIP-HDR-01 SAIP-HDR-02
-fires two-headers.xml      SAIP-HDR-01 SAIP-HDR-02
-fires header-not-first.xml SAIP-HDR-02 SAIP-HDR-01
+fires_exactly() {
+    fixture=$1; expected=$2
+    check "rules: $fixture fires exactly [$expected]" "$expected " "$(fired_ids "$fixture")"
+}
+
+fires_exactly no-header.xml        SAIP-HDR-01
+fires_exactly two-headers.xml      SAIP-HDR-01
+fires_exactly header-not-first.xml SAIP-HDR-02
 
 "$root/bin/saip-validate" "$root/rules" \
     "$root/tests/fixtures/valid-minimal.xml" >/dev/null 2>&1
