@@ -412,6 +412,15 @@ if __name__ == "__main__":
 chmod +x bin/saip-validate
 ```
 
+**Correction, found in review of this task.** The `assert_index()` above is
+wrong, and the code that shipped differs: ISO Schematron fires only the *first*
+matching rule per node *within a pattern*, so keying the index by context alone
+credits a later same-context rule's asserts as evaluated when they never ran.
+Build the index per pattern, taking each context's asserts from the first rule
+bearing it; the same context in two different patterns does fire twice and does
+count twice. The plan's Global Constraint on the evaluated count governs over
+this sample. See commit 73b0fbe.
+
 Note: SVRL puts `@see` on the assert only if the processor copies it. If the
 attribute is absent from the SVRL, the report prints `-`; Task 3 checks whether
 it survives and, if it does not, the runner reads it from the schema by rule id
