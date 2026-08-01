@@ -47,20 +47,39 @@ def load_rules(rules_dir):
 
 
 def assert_index(schema):
-    """Map each rule context to the assert ids it holds.
+    """Return two indices: total asserts, and asserts that can actually fire.
 
     An assert counts as evaluated when its rule fired. Schematron reports fired
     rules, not fired asserts, so the association has to come from the schema.
+    Within a pattern, only the first rule with a given context can fire; rules
+    with the same context in different patterns both fire and both count.
+
+    Returns (all_asserts, evaluable_asserts) where all_asserts includes every
+    assert in the schema (for total count), and evaluable_asserts includes only
+    those from the first rule per context per pattern (for evaluated count).
     """
-    index = {}
-    for rule in schema.iter(f"{SCH}rule"):
-        ids = [
-            a.get("id")
-            for a in rule
-            if a.tag in (f"{SCH}assert", f"{SCH}report") and a.get("id")
-        ]
-        index.setdefault(rule.get("context"), []).extend(ids)
-    return index
+    all_asserts = {}
+    evaluable_asserts = {}
+
+    for pattern in schema.iter(f"{SCH}pattern"):
+        seen_contexts = set()
+        for rule in pattern.findall(f"{SCH}rule"):
+            context = rule.get("context")
+            ids = [
+                a.get("id")
+                for a in rule
+                if a.tag in (f"{SCH}assert", f"{SCH}report") and a.get("id")
+            ]
+
+            # All asserts count toward total
+            all_asserts.setdefault(context, []).extend(ids)
+
+            # Only first rule's asserts per context per pattern can be evaluated
+            if context not in seen_contexts:
+                seen_contexts.add(context)
+                evaluable_asserts.setdefault(context, []).extend(ids)
+
+    return all_asserts, evaluable_asserts
 
 
 def main(argv):
@@ -97,13 +116,17 @@ def main(argv):
     report = validator.validation_report
 
     if svrl_path:
-        with open(svrl_path, "wb") as fh:
-            fh.write(etree.tostring(report, pretty_print=True))
+        try:
+            with open(svrl_path, "wb") as fh:
+                fh.write(etree.tostring(report, pretty_print=True))
+        except OSError as exc:
+            print(f"{argv[0]}: {exc}", file=sys.stderr)
+            return 2
 
-    index = assert_index(schema)
-    total = sum(len(v) for v in index.values())
+    all_asserts, evaluable_asserts = assert_index(schema)
+    total = sum(len(v) for v in all_asserts.values())
     fired = {r.get("context") for r in report.iter(f"{SVRL}fired-rule")}
-    evaluated = sum(len(ids) for ctx, ids in index.items() if ctx in fired)
+    evaluated = sum(len(ids) for ctx, ids in evaluable_asserts.items() if ctx in fired)
 
     errors = warnings = 0
     lines = []

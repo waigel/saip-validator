@@ -56,4 +56,16 @@ check "validate: --svrl is accepted" 1 "$?"
 "$root/bin/saip-validate" "$root/tests/fixtures" /nonexistent.xml >/dev/null 2>&1
 check "validate: missing input is a usage error" 2 "$?"
 
+out=$("$root/bin/saip-validate" "$root/tests/fixtures/dup-context" \
+      "$root/tests/fixtures/trips-one-rule.xml" 2>&1)
+check "validate: duplicate context, second rule does not count" 1 \
+    "$(printf '%s' "$out" | grep -c '1 of 2 rules evaluated')"
+
+out=$("$root/bin/saip-validate" --svrl /nonexistent-dir/out.svrl \
+      "$root/tests/fixtures" "$root/tests/fixtures/trips-one-rule.xml" 2>&1)
+rc=$?
+check "validate: unwritable --svrl path exits 2" 2 "$rc"
+check "validate: unwritable --svrl has no traceback" 0 \
+    "$(printf '%s' "$out" | grep -c 'Traceback')"
+
 exit $fail
