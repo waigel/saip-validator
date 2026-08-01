@@ -198,18 +198,20 @@ def main(argv):
         # Look up @see from schema if not in SVRL
         see = hit.get('see') or id_to_see.get(hit.get('id')) or '-'
         lines.append(
-            f"\n  {hit.get('id'):<12} {role:<8} {text}\n"
+            f"\n  {hit.get('id') or '-':<12} {role:<8} {text}\n"
             f"  {'':<12} at       {hit.get('location')}\n"
             f"  {'':<12} see      {see}"
         )
 
-    # The count of rules that ran belongs in the headline: a rule whose context
-    # is absent from this profile did not pass, it did not run, and "0 errors"
-    # otherwise reads as "everything was checked".
+    # The count of assertions that ran belongs in the headline: an assert whose
+    # rule's context is absent from this profile did not pass, it did not run,
+    # and "0 errors" otherwise reads as "everything was checked". It counts
+    # sch:assert/sch:report elements, not sch:rules -- a rule can carry more
+    # than one assertion, and calling that count "rules" would overstate it.
     print(
         f"{doc_path}: {errors} error{'s' if errors != 1 else ''}, "
         f"{warnings} warning{'s' if warnings != 1 else ''}, "
-        f"{evaluated} of {total} rules evaluated"
+        f"{evaluated} of {total} assertions evaluated"
     )
     for line in lines:
         print(line)

@@ -31,7 +31,7 @@ ept -iber -oxer -p ProfileElement profile.der | ./bin/saip-wrap > profile.xml
 ```
 
 ```
-profile.xml: 0 errors, 0 warnings, 2 of 2 rules evaluated
+profile.xml: 0 errors, 0 warnings, 2 of 2 assertions evaluated
 ```
 
 ### Failing profile
@@ -43,7 +43,7 @@ A profile whose header is not first:
 ```
 
 ```
-tests/fixtures/header-not-first.xml: 1 error, 0 warnings, 2 of 2 rules evaluated
+tests/fixtures/header-not-first.xml: 1 error, 0 warnings, 2 of 2 assertions evaluated
 
   SAIP-HDR-02  error    The Profile Header shall be the first ProfileElement.
                at       /ProfilePackage
