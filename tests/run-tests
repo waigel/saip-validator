@@ -68,4 +68,24 @@ check "validate: unwritable --svrl path exits 2" 2 "$rc"
 check "validate: unwritable --svrl has no traceback" 0 \
     "$(printf '%s' "$out" | grep -c 'Traceback')"
 
+# --- composition rules -------------------------------------------------------
+#
+# Each fixture must trip exactly the rule it is named for. A rule never seen to
+# fire is indistinguishable from one that cannot.
+
+fires() {
+    fixture=$1; rule=$2
+    got=$("$root/bin/saip-validate" "$root/rules" \
+          "$root/tests/fixtures/$fixture" 2>&1 | grep -c "$rule")
+    check "rules: $fixture trips $rule" 1 "$got"
+}
+
+fires no-header.xml        SAIP-HDR-01
+fires two-headers.xml      SAIP-HDR-01
+fires header-not-first.xml SAIP-HDR-02
+
+"$root/bin/saip-validate" "$root/rules" \
+    "$root/tests/fixtures/valid-minimal.xml" >/dev/null 2>&1
+check "rules: a valid package is clean" 0 "$?"
+
 exit $fail

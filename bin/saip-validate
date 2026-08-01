@@ -54,12 +54,14 @@ def assert_index(schema):
     Within a pattern, only the first rule with a given context can fire; rules
     with the same context in different patterns both fire and both count.
 
-    Returns (all_asserts, evaluable_asserts) where all_asserts includes every
-    assert in the schema (for total count), and evaluable_asserts includes only
-    those from the first rule per context per pattern (for evaluated count).
+    Returns (all_asserts, evaluable_asserts, id_to_see) where all_asserts includes
+    every assert in the schema (for total count), evaluable_asserts includes only
+    those from the first rule per context per pattern (for evaluated count), and
+    id_to_see maps assertion ids to their @see attributes.
     """
     all_asserts = {}
     evaluable_asserts = {}
+    id_to_see = {}
 
     for pattern in schema.iter(f"{SCH}pattern"):
         seen_contexts = set()
@@ -71,6 +73,11 @@ def assert_index(schema):
                 if a.tag in (f"{SCH}assert", f"{SCH}report") and a.get("id")
             ]
 
+            # Record @see attributes for all asserts
+            for a in rule:
+                if a.tag in (f"{SCH}assert", f"{SCH}report") and a.get("id"):
+                    id_to_see[a.get("id")] = a.get("see")
+
             # All asserts count toward total
             all_asserts.setdefault(context, []).extend(ids)
 
@@ -79,7 +86,7 @@ def assert_index(schema):
                 seen_contexts.add(context)
                 evaluable_asserts.setdefault(context, []).extend(ids)
 
-    return all_asserts, evaluable_asserts
+    return all_asserts, evaluable_asserts, id_to_see
 
 
 def main(argv):
@@ -123,7 +130,7 @@ def main(argv):
             print(f"{argv[0]}: {exc}", file=sys.stderr)
             return 2
 
-    all_asserts, evaluable_asserts = assert_index(schema)
+    all_asserts, evaluable_asserts, id_to_see = assert_index(schema)
     total = sum(len(v) for v in all_asserts.values())
     fired = {r.get("context") for r in report.iter(f"{SVRL}fired-rule")}
     evaluated = sum(len(ids) for ctx, ids in evaluable_asserts.items() if ctx in fired)
@@ -137,10 +144,12 @@ def main(argv):
         else:
             errors += 1
         text = (hit.findtext(f"{SVRL}text") or "").strip()
+        # Look up @see from schema if not in SVRL
+        see = hit.get('see') or id_to_see.get(hit.get('id')) or '-'
         lines.append(
             f"\n  {hit.get('id'):<12} {role:<8} {text}\n"
             f"  {'':<12} at       {hit.get('location')}\n"
-            f"  {'':<12} see      {hit.get('see') or '-'}"
+            f"  {'':<12} see      {see}"
         )
 
     # The count of rules that ran belongs in the headline: a rule whose context
