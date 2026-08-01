@@ -21,13 +21,29 @@ profile.der ──► ept -oxer ──► saip-wrap ──► Schematron ──�
 
 ## Using it
 
+### Clean profile
+
+A published test profile passes all rules:
+
 ```sh
 ept -iber -oxer -p ProfileElement profile.der | ./bin/saip-wrap > profile.xml
 ./bin/saip-validate rules profile.xml
 ```
 
 ```
-profile.xml: 1 error, 0 warnings, 2 of 2 rules evaluated
+profile.xml: 0 errors, 0 warnings, 2 of 2 rules evaluated
+```
+
+### Failing profile
+
+A profile whose header is not first:
+
+```sh
+./bin/saip-validate rules tests/fixtures/header-not-first.xml
+```
+
+```
+tests/fixtures/header-not-first.xml: 1 error, 0 warnings, 2 of 2 rules evaluated
 
   SAIP-HDR-02  error    The Profile Header shall be the first ProfileElement.
                at       /ProfilePackage
