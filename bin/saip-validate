@@ -66,8 +66,10 @@ def assert_index(schema):
     evaluable_asserts = {}
     id_to_see = {}
 
-    for pattern in schema.iter(f"{SCH}pattern"):
-        pattern_key = pattern.get("id") or id(pattern)
+    for index, pattern in enumerate(schema.iter(f"{SCH}pattern")):
+        # Position, not object identity: a pattern without @id still needs a key
+        # that means the same thing on the next run.
+        pattern_key = pattern.get("id") or index
         seen_contexts = set()
         for rule in pattern.findall(f"{SCH}rule"):
             context = rule.get("context")

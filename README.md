@@ -1,5 +1,7 @@
 # saip-validator
 
+[![ci](https://github.com/waigel/saip-validator/actions/workflows/ci.yml/badge.svg)](https://github.com/waigel/saip-validator/actions/workflows/ci.yml)
+
 Business-rule validation for **eUICC profile packages** in the Trusted
 Connectivity Alliance's *eUICC Profile Package: Interoperable Format* (SAIP).
 
@@ -57,6 +59,29 @@ an error, `2` usage.
 **The rule count is not decoration.** A rule whose context does not occur in a
 profile did not pass — it did not run. Without that number, "0 errors" reads as
 "everything was checked".
+
+## Writing a rule
+
+Every assertion carries three attributes, and the tool refuses a rule set that
+omits any of them rather than half-checking it:
+
+```xml
+<sch:assert id="SAIP-HDR-01" role="error" see="saip-3.4.1#8.2.1"
+            test="count(ProfileElement/header) = 1">
+  A profile package shall contain exactly one Profile Header.
+</sch:assert>
+```
+
+- `@id` is stable and opaque. Reports cite it and tests are named after it, so
+  renumbering the specification must not invalidate it.
+- `@see` is the clause the rule comes from. A rule without one is an opinion,
+  and this project has no use for opinions.
+- `@role` is `error` or `warning`. The specification says "should" in places.
+
+A new rule also needs a fixture in `tests/fixtures/` that makes it fire, and its
+id added to the expected set for that fixture. `tests/run-tests` fails if any
+declared id is never tripped by any fixture — a rule never seen to fire is
+indistinguishable from one that cannot.
 
 ## Testing
 

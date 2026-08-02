@@ -110,8 +110,7 @@ fires_exactly header-not-first.xml SAIP-HDR-02
 # rules/*.sch must equal the set the fixtures actually trip.
 
 declared_ids() {
-    grep -ohE 'id="SAIP-[A-Z]+-[0-9]+"' "$root"/rules/*.sch \
-        | sed -E 's/id="([^"]+)"/\1/' | sort -u
+    grep -oh 'SAIP-[A-Z]\{1,\}-[0-9]\{1,\}' "$root"/rules/*.sch | sort -u
 }
 
 fired_ids_any_fixture() {

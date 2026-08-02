@@ -1,0 +1,44 @@
+# Runs the rule set against its counter-examples.
+#
+# Only tests/run-tests runs here. tests/run-corpus needs the converter and a
+# directory of published profiles, and those belong to their publishers rather
+# than to this repository -- so the corpus is a local gate, not a CI one. That
+# is a real hole in what CI proves, and saying so is better than pretending the
+# green badge covers it.
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.9'
+
+      - name: Install lxml
+        run: python -m pip install --upgrade pip lxml
+
+      - name: Run the test suite
+        run: ./tests/run-tests
+
+      # The scripts claim to be POSIX sh. dash is the cheapest way to find out,
+      # and it is the default /bin/sh on Debian and Ubuntu.
+      - name: Check both scripts under dash
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq dash
+          dash -n bin/saip-wrap
+          dash -n tests/run-tests
+          dash -n tests/run-corpus
+          dash ./tests/run-tests
