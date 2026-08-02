@@ -13,16 +13,31 @@
   template in the Profile Package". Every DF row of every template read so far
   names pinStatusTemplateDO there.
 
-  The OID list below covers only the templates whose tables have been read
-  (9.2 MF, 9.3 DF CD, 9.4 DF TELECOM). Extending it means reading the table, not
-  assuming the pattern holds: the same assumption applied to Annex A as a whole
-  would have produced a rule that contradicts 9.1.
+  Every table in Annex A has now been read, and reading them rather than
+  assuming the pattern was worth it three times.
+
+  The "not created by default" EF-list templates, such as 9.5.2 Optional USIM
+  EFs, 9.6.2 Optional ISIM EFs and 9.7.2 Optional CSIM EFs, have no root row and
+  no Parameters entry at all. They require nothing.
+
+  The IoT templates, 9.10.1 and 9.10.2, name pinStatusTemplateDO in a note as a
+  *default value* rather than in the Parameters column as an obligation: "The
+  default value of pinStatusTemplateDO is '010A'". A profile need not supply it,
+  so they are absent from the list too.
+
+  The ADF templates ask for more than the DF ones. ADF USIM, ADF ISIM, ADF CSIM
+  and ADF SSIM all read "AID, Temporary FID, pinStatusTemplateDO", and DF EAP
+  reads "FID, pinStatusTemplateDO". This rule checks the part they share, keyed
+  on the templateID. The AID and the Temporary FID are checked from the other
+  direction, by SAIP-FCP-11 and SAIP-FCP-10 in fcp-mandatory.sch: 8.3.3 marks
+  dfName and fileID mandatory in the FCP of an ADF, and 8.3.2 identifies dfName
+  as the AID and fileID as the temporary file ID.
 -->
 <sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron" queryBinding="xslt">
 
   <sch:pattern id="template-parameters">
     <sch:let name="needs-pin-status"
-             value="' 2.23.143.1.2.1 2.23.143.1.2.2 2.23.143.1.2.3 2.23.143.1.2.3.2 2.23.143.1.2.3.3 '"/>
+             value="' 2.23.143.1.2.1 2.23.143.1.2.2 2.23.143.1.2.3 2.23.143.1.2.3.2 2.23.143.1.2.3.3 2.23.143.1.2.4 2.23.143.1.2.4.2 2.23.143.1.2.6 2.23.143.1.2.7 2.23.143.1.2.8 2.23.143.1.2.10 2.23.143.1.2.10.2 2.23.143.1.2.12 2.23.143.1.2.13 2.23.143.1.2.13.2 2.23.143.1.2.13.3 2.23.143.1.2.13.4 2.23.143.1.2.14 2.23.143.1.2.15 2.23.143.1.2.15.2 2.23.143.1.2.16 2.23.143.1.2.16.2 2.23.143.1.2.19 '"/>
 
     <sch:rule context="/ProfilePackage/ProfileElement/*[templateID]">
       <sch:assert id="SAIP-TPP-01" role="error" see="saip-3.4.1#9.1"

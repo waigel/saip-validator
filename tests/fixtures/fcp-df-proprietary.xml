@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header>
+    <df-cd><fileDescriptor><fileID>2F 05</fileID><pinStatusTemplateDO>81 01 0A</pinStatusTemplateDO><proprietaryEFInfo><specialFileInformation>40</specialFileInformation></proprietaryEFInfo></fileDescriptor></df-cd></mf></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

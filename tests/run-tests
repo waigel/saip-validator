@@ -155,6 +155,26 @@ fires_exactly ordering-after-mf-csim.xml     SAIP-ORD-15
 fires_exactly ordering-after-mf-ssim.xml     SAIP-ORD-16
 fires_exactly pin-local-in-mf.xml            SAIP-PIN-05
 fires_exactly pin-global-in-adf.xml          SAIP-PIN-06
+fires_exactly fcp-ef-pinstatus.xml           SAIP-FCP-01
+fires_exactly fcp-ef-dfname.xml              SAIP-FCP-02
+fires_exactly fcp-df-shortefid.xml           SAIP-FCP-03
+fires_exactly fcp-df-effilesize.xml          SAIP-FCP-04
+fires_exactly fcp-df-proprietary.xml         SAIP-FCP-05
+fires_exactly fcp-df-dfname.xml              SAIP-FCP-06
+fires_exactly fcp-adf-shortefid.xml          SAIP-FCP-07
+fires_exactly fcp-adf-effilesize.xml         SAIP-FCP-08
+fires_exactly fcp-adf-proprietary.xml        SAIP-FCP-09
+fires_exactly fcp-adf-no-fileid.xml          SAIP-FCP-10
+fires_exactly fcp-adf-no-dfname.xml          SAIP-FCP-11
+fires_exactly fcp-adf-no-pinstatus.xml       SAIP-FCP-12
+fires_exactly fcp-df-no-pinstatus.xml        SAIP-FCP-13
+fires_exactly gfm-no-fileid.xml              SAIP-GFM-01
+fires_exactly gfm-no-secattr.xml             SAIP-GFM-02
+fires_exactly gfm-no-filedesc.xml            SAIP-GFM-03
+fires_exactly gfm-adf-no-pinstatus.xml       SAIP-GFM-04
+fires_exactly gfm-adf-shortefid.xml          SAIP-GFM-05
+fires_exactly gfm-link-pinstatus.xml         SAIP-GFM-06
+fires_exactly gfm-ef-pinstatus.xml           SAIP-GFM-07
 fires_exactly rfm-before-adf.xml             SAIP-RFM-02
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
