@@ -1,0 +1,135 @@
+#!/bin/sh
+# Test driver. Every check prints one line; a failure sets the exit code.
+set -u
+here=$(dirname "$0")
+root=$(cd "$here/.." && pwd)
+fail=0
+
+check() {
+    name=$1; expected=$2; actual=$3
+    if [ "$expected" = "$actual" ]; then
+        echo "ok   $name"
+    else
+        echo "FAIL $name"
+        echo "     expected: $expected"
+        echo "     actual:   $actual"
+        fail=1
+    fi
+}
+
+# --- saip-wrap ---------------------------------------------------------------
+
+wrapped=$("$root/bin/saip-wrap" < "$root/tests/fixtures/two-elements.xer")
+
+check "wrap: one root element" 1 \
+    "$(printf '%s' "$wrapped" | grep -c '<ProfilePackage>')"
+check "wrap: both elements kept" 2 \
+    "$(printf '%s' "$wrapped" | grep -c '<ProfileElement>')"
+check "wrap: closes the root" 1 \
+    "$(printf '%s' "$wrapped" | grep -c '</ProfilePackage>')"
+check "wrap: output is well-formed" 0 \
+    "$(printf '%s' "$wrapped" | python3 -c 'import sys,xml.dom.minidom as m; m.parseString(sys.stdin.read())' >/dev/null 2>&1; echo $?)"
+
+printf '' | "$root/bin/saip-wrap" >/dev/null 2>&1
+check "wrap: empty input is an error" 2 "$?"
+
+# --- saip-validate -----------------------------------------------------------
+
+out=$("$root/bin/saip-validate" "$root/tests/fixtures" \
+      "$root/tests/fixtures/trips-one-rule.xml" 2>&1)
+rc=$?
+
+check "validate: exit 1 when an error fires" 1 "$rc"
+check "validate: names the failing rule" 1 "$(printf '%s' "$out" | grep -c 'TEST-ERR-01')"
+check "validate: names the warning" 1 "$(printf '%s' "$out" | grep -c 'TEST-WARN-01')"
+check "validate: counts one error" 1 \
+    "$(printf '%s' "$out" | grep -c '1 error, 1 warning')"
+check "validate: reports assertions evaluated, not total" 1 \
+    "$(printf '%s' "$out" | grep -c '2 of 3 assertions evaluated')"
+check "validate: says nothing about the rule that did not run" 0 \
+    "$(printf '%s' "$out" | grep -c 'TEST-NEVER-01')"
+
+"$root/bin/saip-validate" --svrl /dev/null "$root/tests/fixtures" \
+    "$root/tests/fixtures/trips-one-rule.xml" >/dev/null 2>&1
+check "validate: --svrl is accepted" 1 "$?"
+
+"$root/bin/saip-validate" "$root/tests/fixtures" /nonexistent.xml >/dev/null 2>&1
+check "validate: missing input is a usage error" 2 "$?"
+
+out=$("$root/bin/saip-validate" "$root/tests/fixtures/dup-context" \
+      "$root/tests/fixtures/trips-one-rule.xml" 2>&1)
+check "validate: duplicate context, second rule does not count" 1 \
+    "$(printf '%s' "$out" | grep -c '1 of 2 assertions evaluated')"
+
+out=$("$root/bin/saip-validate" --svrl /nonexistent-dir/out.svrl \
+      "$root/tests/fixtures" "$root/tests/fixtures/trips-one-rule.xml" 2>&1)
+rc=$?
+check "validate: unwritable --svrl path exits 2" 2 "$rc"
+check "validate: unwritable --svrl has no traceback" 0 \
+    "$(printf '%s' "$out" | grep -c 'Traceback')"
+
+# --- assert hygiene: @id and @see are mandatory, not conventions --------------
+
+out=$("$root/bin/saip-validate" "$root/tests/fixtures/no-id" \
+      "$root/tests/fixtures/valid-minimal.xml" 2>&1)
+rc=$?
+check "validate: assert without @id is rejected" 2 "$rc"
+check "validate: names the offending rule context" 1 \
+    "$(printf '%s' "$out" | grep -c "context '/ProfilePackage'")"
+check "validate: rejection has no traceback" 0 \
+    "$(printf '%s' "$out" | grep -c 'Traceback')"
+
+# --- composition rules -------------------------------------------------------
+#
+# Each counter-example asserts the exact set of rule ids that fired, not a
+# presence and one absence. This catches regressions where new rules are added
+# or a guard is removed, causing multiple complaints for one fault. A rule
+# never seen to fire is indistinguishable from one that cannot.
+
+# Every SAIP rule id the report names, sorted and space-separated.
+fired_ids() {
+    "$root/bin/saip-validate" "$root/rules" "$root/tests/fixtures/$1" 2>&1 \
+        | grep -oE 'SAIP-[A-Z]+-[0-9]+' | sort -u | tr '\n' ' '
+}
+
+fires_exactly() {
+    fixture=$1; expected=$2
+    check "rules: $fixture fires exactly [$expected]" "$expected " "$(fired_ids "$fixture")"
+}
+
+fires_exactly no-header.xml        SAIP-HDR-01
+fires_exactly two-headers.xml      SAIP-HDR-01
+fires_exactly header-not-first.xml SAIP-HDR-02
+
+# --- coverage: every declared rule id fires in some fixture ------------------
+#
+# fires_exactly above is hardcoded per fixture, so a rule nobody wrote a
+# fixture for is invisible to it: the id is simply never mentioned. This check
+# makes the plan's constraint -- every rule ships with a fixture that makes it
+# fire -- executable rather than a promise: the set of ids declared in
+# rules/*.sch must equal the set the fixtures actually trip.
+
+declared_ids() {
+    grep -ohE 'id="SAIP-[A-Z]+-[0-9]+"' "$root"/rules/*.sch \
+        | sed -E 's/id="([^"]+)"/\1/' | sort -u
+}
+
+fired_ids_any_fixture() {
+    for xml in "$root"/tests/fixtures/*.xml; do
+        "$root/bin/saip-validate" "$root/rules" "$xml" 2>&1
+    done | grep -oE 'SAIP-[A-Z]+-[0-9]+' | sort -u
+}
+
+declared_tmp=$(mktemp)
+fired_tmp=$(mktemp)
+declared_ids > "$declared_tmp"
+fired_ids_any_fixture > "$fired_tmp"
+missing=$(comm -23 "$declared_tmp" "$fired_tmp")
+rm -f "$declared_tmp" "$fired_tmp"
+check "rules: every declared rule id fires in some fixture" "" "$missing"
+
+"$root/bin/saip-validate" "$root/rules" \
+    "$root/tests/fixtures/valid-minimal.xml" >/dev/null 2>&1
+check "rules: a valid package is clean" 0 "$?"
+
+exit $fail

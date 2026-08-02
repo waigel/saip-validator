@@ -129,14 +129,16 @@ format and what a CI job consumes. The readable form is an XSLT over that SVRL,
 never a second code path, so the two cannot drift:
 
 ```
-profile.der: 2 errors, 1 warning, 47 of 118 rules evaluated
+profile.der: 2 errors, 1 warning, 47 of 118 assertions evaluated
 
   SAIP-HDR-02  error    The Profile Header shall be the first ProfileElement.
                at       /ProfilePackage/ProfileElement[1]
                see      saip-3.4.1 §8.2
 ```
 
-**The rule count is part of the report, not decoration.** A rule whose context
+**The count is part of the report, not decoration.** It counts assertions
+rather than `sch:rule` elements, because an assertion is what either held or did
+not; the wording in the tool says so. A rule whose context
 does not occur in this profile did not pass — it did not run. Without that
 number, "0 errors" reads as "everything was checked", which is exactly the
 misreading this project exists to prevent.
@@ -190,3 +192,16 @@ files, and change this document at the same time.
   keys this project will never hold.
 - Replacing `asn1vn -C`. Subtype constraints are the layer below; this one
   assumes they hold.
+
+## Follow-ups
+
+Raised by the final review of the first increment and deliberately not fixed
+there, so the record is here rather than in a closed branch:
+
+- `bin/saip-validate` keys a pattern that has no `@id` by its Python object
+  identity. No collision could be produced, but a stable index would be sturdier.
+- The coverage check in `tests/run-tests` uses `sed -E`, which is not strictly
+  POSIX. It runs under `dash`; a portable spelling would be better.
+- The README does not yet state that every assertion needs `@id` and `@see`, and
+  that a rule set lacking either is refused. The tool enforces it; a reader
+  meeting the error deserves to have been warned.

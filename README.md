@@ -19,11 +19,62 @@ product**; the engine already exists.
 profile.der ──► ept -oxer ──► saip-wrap ──► Schematron ──► SVRL ──► report
 ```
 
+## Using it
+
+### Clean profile
+
+A published test profile passes all rules:
+
+```sh
+ept -iber -oxer -p ProfileElement profile.der | ./bin/saip-wrap > profile.xml
+./bin/saip-validate rules profile.xml
+```
+
+```
+profile.xml: 0 errors, 0 warnings, 2 of 2 assertions evaluated
+```
+
+### Failing profile
+
+A profile whose header is not first:
+
+```sh
+./bin/saip-validate rules tests/fixtures/header-not-first.xml
+```
+
+```
+tests/fixtures/header-not-first.xml: 1 error, 0 warnings, 2 of 2 assertions evaluated
+
+  SAIP-HDR-02  error    The Profile Header shall be the first ProfileElement.
+               at       /ProfilePackage
+               see      saip-3.4.1#8.2.1
+```
+
+`--svrl FILE` writes the raw SVRL alongside, which is the format to archive and
+to feed a CI job. `--strict` makes warnings fail too. Exit codes: `0` clean, `1`
+an error, `2` usage.
+
+**The rule count is not decoration.** A rule whose context does not occur in a
+profile did not pass — it did not run. Without that number, "0 errors" reads as
+"everything was checked".
+
+## Testing
+
+```sh
+./tests/run-tests                      # the rules, against their counter-examples
+EPT=<path-to-ept> ./tests/run-corpus <dir-with-*.der>    # published profiles must stay clean
+```
+
+Every rule ships with a fixture that makes it fire, because a rule never seen to
+fire is indistinguishable from one that cannot. `run-corpus` is the other half:
+the rule set must leave valid profiles alone, and the only honest evidence for
+that is profiles somebody else published. The `EPT` variable names the converter
+(`ept`), which is not assumed to be on the PATH.
+
 ## Status
 
-Design agreed, nothing implemented. See
-[docs/design/2026-08-01-saip-validator-design.md](docs/design/2026-08-01-saip-validator-design.md)
-for the shape, the rule format and how a rule set gets tested.
+Two composition rules. The pipeline and the test harness are in place, so
+further rules are additions to `rules/` plus their counter-examples.
 
 ## Scope
 

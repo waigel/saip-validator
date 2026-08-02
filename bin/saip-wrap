@@ -1,0 +1,24 @@
+#!/bin/sh
+# XER on stdin, one XML document on stdout.
+#
+# `ept -oxer` emits one XER document per ProfileElement with no enclosing
+# element and no XML declaration, so a profile package arrives here as a
+# concatenation. XPath needs exactly one root, so this supplies it.
+#
+# The element name is part of the interface: every rule is written against
+# /ProfilePackage, and renaming it breaks all of them.
+set -eu
+
+tmp=$(mktemp)
+trap 'rm -f "$tmp"' EXIT
+cat > "$tmp"
+
+if [ ! -s "$tmp" ]; then
+    echo "saip-wrap: no input on stdin" >&2
+    exit 2
+fi
+
+echo '<?xml version="1.0" encoding="UTF-8"?>'
+echo '<ProfilePackage>'
+cat "$tmp"
+echo '</ProfilePackage>'

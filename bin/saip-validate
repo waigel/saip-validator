@@ -1,0 +1,225 @@
+#!/usr/bin/env python3
+"""Run an ISO Schematron rule set over a wrapped profile package.
+
+The rules are plain Schematron, so any ISO Schematron processor can consume
+them; lxml's is used here because it needs no JVM and is already a dependency
+of nothing else.
+
+Two outputs from one run: the SVRL the processor produces, which is the archive
+format, and a readable summary derived from that same SVRL rather than from a
+second pass -- so the two cannot drift apart.
+"""
+import sys
+from pathlib import Path
+
+from lxml import etree, isoschematron
+
+SVRL = "{http://purl.oclc.org/dsdl/svrl}"
+SCH = "{http://purl.oclc.org/dsdl/schematron}"
+
+
+def usage(prog):
+    print(
+        f"usage: {prog} [--strict] [--svrl FILE] <rules-dir> <document.xml>\n"
+        "\n"
+        "  --strict     treat warnings as errors\n"
+        "  --svrl FILE  also write the raw SVRL there\n",
+        file=sys.stderr,
+    )
+    return 2
+
+
+def load_rules(rules_dir):
+    """Every .sch in the directory, merged into one schema.
+
+    Merging keeps rule ids in one namespace, which is what the report cites,
+    and lets the rules be split into files by subject rather than by run.
+    """
+    files = sorted(Path(rules_dir).glob("*.sch"))
+    if not files:
+        raise FileNotFoundError(f"no .sch files in {rules_dir}")
+
+    merged = etree.Element(f"{SCH}schema", queryBinding="xslt")
+    for f in files:
+        for child in etree.parse(str(f)).getroot():
+            merged.append(child)
+    return merged
+
+
+def assert_index(schema):
+    """Return two indices: total asserts, and asserts that can actually fire.
+
+    An assert counts as evaluated when its rule fired. Schematron reports fired
+    rules, not fired asserts, so the association has to come from the schema.
+    Within a pattern, only the first rule with a given context can fire; rules
+    with the same context in different patterns both fire and both count.
+
+    Returns (all_asserts, evaluable_asserts, id_to_see) where all_asserts includes
+    every assert in the schema (for total count), evaluable_asserts includes only
+    those from the first rule per context per pattern (for evaluated count), and
+    id_to_see maps assertion ids to their @see attributes. Both index dicts are
+    keyed by (pattern, context), not context alone: two patterns sharing a
+    context are a real case (see above), and collapsing them onto one key would
+    make the per-key lists mean nothing to anyone reading this index later.
+    """
+    all_asserts = {}
+    evaluable_asserts = {}
+    id_to_see = {}
+
+    for pattern in schema.iter(f"{SCH}pattern"):
+        pattern_key = pattern.get("id") or id(pattern)
+        seen_contexts = set()
+        for rule in pattern.findall(f"{SCH}rule"):
+            context = rule.get("context")
+            key = (pattern_key, context)
+            ids = [
+                a.get("id")
+                for a in rule
+                if a.tag in (f"{SCH}assert", f"{SCH}report") and a.get("id")
+            ]
+
+            # Record @see attributes for all asserts
+            for a in rule:
+                if a.tag in (f"{SCH}assert", f"{SCH}report") and a.get("id"):
+                    id_to_see[a.get("id")] = a.get("see")
+
+            # All asserts count toward total
+            all_asserts.setdefault(key, []).extend(ids)
+
+            # Only first rule's asserts per context per pattern can be evaluated
+            if context not in seen_contexts:
+                seen_contexts.add(context)
+                evaluable_asserts.setdefault(key, []).extend(ids)
+
+    return all_asserts, evaluable_asserts, id_to_see
+
+
+def find_missing_attrs(schema):
+    """Every assert and report must carry @id and @see (see the design note on
+    rule ids). Return one message per offender, naming its rule's context, or
+    an empty list if the schema is clean.
+
+    Checked once, before the schema is handed to the processor: an id-less
+    assert used to crash the report formatter later, and both id-less and
+    see-less asserts were silently uncounted rather than rejected.
+    """
+    problems = []
+    for rule in schema.iter(f"{SCH}rule"):
+        context = rule.get("context")
+        for a in rule:
+            if a.tag not in (f"{SCH}assert", f"{SCH}report"):
+                continue
+            kind = "assert" if a.tag == f"{SCH}assert" else "report"
+            if not a.get("id"):
+                problems.append(f"{kind} without @id in context '{context}'")
+            elif not a.get("see"):
+                problems.append(
+                    f"{kind} '{a.get('id')}' without @see in context '{context}'"
+                )
+    return problems
+
+
+def main(argv):
+    strict = False
+    svrl_path = None
+    args = []
+
+    i = 1
+    while i < len(argv):
+        if argv[i] == "--strict":
+            strict = True
+        elif argv[i] == "--svrl" and i + 1 < len(argv):
+            i += 1
+            svrl_path = argv[i]
+        elif argv[i].startswith("-"):
+            return usage(argv[0])
+        else:
+            args.append(argv[i])
+        i += 1
+
+    if len(args) != 2:
+        return usage(argv[0])
+    rules_dir, doc_path = args
+
+    try:
+        schema = load_rules(rules_dir)
+        document = etree.parse(doc_path)
+    except (OSError, etree.LxmlError) as exc:
+        print(f"{argv[0]}: {exc}", file=sys.stderr)
+        return 2
+
+    # An assert without @id used to reach the report formatter and crash
+    # there; one without @see is an opinion, per the design note on rule ids.
+    # Refuse the rule set outright rather than count it wrong or fall over
+    # later.
+    problems = find_missing_attrs(schema)
+    if problems:
+        print(f"{argv[0]}: invalid rule set:", file=sys.stderr)
+        for problem in problems:
+            print(f"  {problem}", file=sys.stderr)
+        return 2
+
+    # A broken rule set -- an XPath that does not compile, an undefined
+    # namespace prefix, a .sch that is not Schematron at all -- must not look
+    # like a bad profile. Both raise lxml errors, one at construction and one
+    # only once the transform actually runs; catch both here in one place.
+    try:
+        validator = isoschematron.Schematron(schema, store_report=True)
+        validator.validate(document)
+    except etree.LxmlError as exc:
+        print(f"{argv[0]}: invalid rule set: {exc}", file=sys.stderr)
+        return 2
+    report = validator.validation_report
+
+    if svrl_path:
+        try:
+            with open(svrl_path, "wb") as fh:
+                fh.write(etree.tostring(report, pretty_print=True))
+        except OSError as exc:
+            print(f"{argv[0]}: {exc}", file=sys.stderr)
+            return 2
+
+    all_asserts, evaluable_asserts, id_to_see = assert_index(schema)
+    total = sum(len(v) for v in all_asserts.values())
+    fired = {r.get("context") for r in report.iter(f"{SVRL}fired-rule")}
+    evaluated = sum(
+        len(ids) for (_, ctx), ids in evaluable_asserts.items() if ctx in fired
+    )
+
+    errors = warnings = 0
+    lines = []
+    for hit in report.iter(f"{SVRL}failed-assert", f"{SVRL}successful-report"):
+        role = hit.get("role") or "error"
+        if role == "warning":
+            warnings += 1
+        else:
+            errors += 1
+        text = (hit.findtext(f"{SVRL}text") or "").strip()
+        # Look up @see from schema if not in SVRL
+        see = hit.get('see') or id_to_see.get(hit.get('id')) or '-'
+        lines.append(
+            f"\n  {hit.get('id') or '-':<12} {role:<8} {text}\n"
+            f"  {'':<12} at       {hit.get('location')}\n"
+            f"  {'':<12} see      {see}"
+        )
+
+    # The count of assertions that ran belongs in the headline: an assert whose
+    # rule's context is absent from this profile did not pass, it did not run,
+    # and "0 errors" otherwise reads as "everything was checked". It counts
+    # sch:assert/sch:report elements, not sch:rules -- a rule can carry more
+    # than one assertion, and calling that count "rules" would overstate it.
+    print(
+        f"{doc_path}: {errors} error{'s' if errors != 1 else ''}, "
+        f"{warnings} warning{'s' if warnings != 1 else ''}, "
+        f"{evaluated} of {total} assertions evaluated"
+    )
+    for line in lines:
+        print(line)
+
+    if errors or (strict and warnings):
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv))
