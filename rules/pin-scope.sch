@@ -63,4 +63,27 @@
     </sch:rule>
   </sch:pattern>
 
+  <!--
+    The same E.118 obligation, "padded with 'F' if less digits are used", is
+    stated for the header ICCID without qualification. Outside an IoT Minimal
+    Profile it is a warning rather than an error, because 8.2.1 also says that
+    value "is not checked by the eUICC" and "is not used": a malformed one is
+    wrong by the letter but harmless in effect, and this project does not
+    escalate what the specification itself declines to act on.
+  -->
+  <sch:pattern id="iccid-padding-full">
+    <sch:rule context="/ProfilePackage/ProfileElement/header[not(iotOptions)]/iccid">
+      <sch:let name="d" value="translate(normalize-space(.), ' ', '')"/>
+
+      <sch:assert id="SAIP-ICC-02" role="warning" see="saip-3.4.1#8.2.1"
+                  test="not(contains($d, 'F'))
+                        or translate(substring($d,
+                              string-length(substring-before($d, 'F')) + 1),
+                              'F', '') = ''">
+        The ICCID is an ITU E.118 representation padded with 'F', so any 'F'
+        shall be trailing padding.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
 </sch:schema>

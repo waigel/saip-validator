@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ProfilePackage>
-  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><cd><cd-header/></cd></ProfileElement>
   <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>

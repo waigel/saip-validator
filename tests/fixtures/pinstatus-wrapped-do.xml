@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ProfilePackage>
-  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header><df-cd><fileDescriptor><fileID>7F 11</fileID><pinStatusTemplateDO>C6 03 01 81 0A</pinStatusTemplateDO></fileDescriptor></df-cd></mf></ProfileElement>
   <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>

@@ -17,6 +17,15 @@
   ISIM or CSIM)"; PE-CDMAParameter names CAVE and CSIM; PE-SSIM-EAPTLSParameters
   names SSIM alone.
 
+  The two clauses disagree about which NAAs take AKA parameters, and this rule
+  takes their union rather than picking a side. 8.4.1 lists "PE-AKAParameter (if
+  <NAA> = USIM, ISIM or SSIM)", omitting CSIM; 8.4.2's usage rule writes "(e.g.,
+  USIM, ISIM or CSIM using Milenage)", omitting SSIM but hedging with "e.g.".
+  8.1.3 settles that SSIM belongs, since it says PE-AKAParameter is what an SSIM
+  uses "If EAP-AKA' authentication is required". A union cannot reject a profile
+  either clause permits, which is the safe direction for a disagreement between
+  two normative sentences.
+
   The published corpus places akaParameter after usim and after isim,
   cdmaParameter after csim, and satisfies every rule here.
 -->
@@ -24,11 +33,12 @@
 
   <sch:pattern id="naa-parameter-order">
     <sch:rule context="/ProfilePackage/ProfileElement/akaParameter">
-      <sch:assert id="SAIP-NAA-01" role="error" see="saip-3.4.1#8.4.2"
+      <sch:assert id="SAIP-NAA-01" role="error" see="saip-3.4.1#8.4.1"
                   test="../preceding-sibling::ProfileElement/usim
                         or ../preceding-sibling::ProfileElement/isim
-                        or ../preceding-sibling::ProfileElement/csim">
-        PE-AKAParameter shall come after the creation of a USIM, ISIM or CSIM.
+                        or ../preceding-sibling::ProfileElement/csim
+                        or ../preceding-sibling::ProfileElement/ssim">
+        PE-AKAParameter shall come after the creation of a NAA.
       </sch:assert>
     </sch:rule>
 
@@ -61,6 +71,33 @@
                         or ../preceding-sibling::ProfileElement/csim
                         or ../preceding-sibling::ProfileElement/ssim">
         PE-EAP shall come after the creation of an ADF.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <!--
+    8.1.3: "Only one occurrence of either PE-SSIM-EAPTLSParameters or
+    PE-AKAParameter shall be provided per SSIM." Per SSIM, not per package, so
+    counting across the package would reject a profile with two SSIMs.
+
+    The scope is expressed positionally, the same way the PIN context is: two
+    parameter PEs belong to the same NAA when the nearest NAA-creating PE before
+    each is the same node, which generate-id compares.
+  -->
+  <sch:pattern id="ssim-one-authentication-pe">
+    <sch:rule context="/ProfilePackage/ProfileElement[akaParameter or ssimEapTLSParameters]">
+      <sch:let name="naa"
+               value="preceding-sibling::ProfileElement[usim or isim or csim or ssim][1]"/>
+
+      <sch:assert id="SAIP-NAA-05" role="error" see="saip-3.4.1#8.1.3"
+                  test="not($naa/ssim)
+                        or not(preceding-sibling::ProfileElement[
+                                 akaParameter or ssimEapTLSParameters][
+                                 generate-id(preceding-sibling::ProfileElement[
+                                   usim or isim or csim or ssim][1])
+                                 = generate-id($naa)])">
+        Only one of PE-SSIM-EAPTLSParameters or PE-AKAParameter shall be
+        provided per SSIM.
       </sch:assert>
     </sch:rule>
   </sch:pattern>

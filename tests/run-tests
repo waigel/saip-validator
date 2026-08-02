@@ -183,6 +183,11 @@ fires_exactly naa-cdma-before-csim.xml       SAIP-NAA-02
 fires_exactly naa-eaptls-before-ssim.xml     SAIP-NAA-03
 fires_exactly naa-eap-before-adf.xml         SAIP-NAA-04
 fires_exactly rfm-before-adf.xml             SAIP-RFM-02
+fires_exactly pe-without-identification.xml  SAIP-PEID-02
+fires_exactly iccid-interior-f-full.xml      SAIP-ICC-02
+fires_exactly ssim-two-auth-pes.xml          SAIP-NAA-05
+fires_exactly pinstatus-wrapped-do.xml       SAIP-FCP-14
+fires_exactly bertlv-with-offset.xml         SAIP-FCP-15
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
 # fires_exactly above is hardcoded per fixture, so a rule nobody wrote a

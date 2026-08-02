@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header><ef-mml><fileDescriptor><fileID>4F 47</fileID><proprietaryEFInfo><maximumFileSize>01 00</maximumFileSize></proprietaryEFInfo></fileDescriptor><fillFileOffset>4</fillFileOffset></ef-mml></mf></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

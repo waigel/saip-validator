@@ -57,6 +57,23 @@
     identification in the schema belongs to PEStatus, an eUICC *response*, which
     never appears inside a profile package.
   -->
+  <!--
+    7.1: "An identification number shall be associated with every PE." That is a
+    separate obligation from uniqueness, and only uniqueness was checked here
+    until an audit of the specification's "shall" sentences turned it up. The
+    Profile Header is the one ProfileElement carrying no PE header, so it is
+    excluded.
+  -->
+  <sch:pattern id="pe-identification-present">
+    <sch:rule context="/ProfilePackage/ProfileElement[not(header)]">
+      <sch:assert id="SAIP-PEID-02" role="error" see="saip-3.4.1#7.1"
+                  test=".//identification">
+        Every ProfileElement other than the Profile Header shall carry an
+        identification.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
   <sch:pattern id="pe-identification">
     <sch:rule context="/ProfilePackage/ProfileElement//identification">
       <sch:assert id="SAIP-PEID-01" role="error" see="saip-3.4.1#8.1.3"
