@@ -132,6 +132,10 @@ fires_exactly twice-iot.xml                 SAIP-CARD-02
 fires_exactly twice-pukCodes.xml            SAIP-CARD-03
 fires_exactly unknown-template.xml          SAIP-TPL-01
 fires_exactly template-without-pinstatus.xml SAIP-TPP-01
+fires_exactly pin-unresolved-puk.xml        SAIP-PIN-01
+fires_exactly pin-duplicate-key.xml         SAIP-PIN-02
+fires_exactly retry-exceeds-max.xml         SAIP-PIN-03
+fires_exactly puk-duplicate-key.xml         SAIP-PUK-01
 
 
 # --- coverage: every declared rule id fires in some fixture ------------------

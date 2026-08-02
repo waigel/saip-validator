@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><pukCodes><puk-Header><identification>1</identification></puk-Header>
+    <pukCodes>
+      <PUKConfiguration><keyReference>1</keyReference><pukValue>31 31 31 31 31 31 31 31</pukValue>
+        <maxNumOfAttemps-retryNumLeft>170</maxNumOfAttemps-retryNumLeft></PUKConfiguration>
+      <PUKConfiguration><keyReference>1</keyReference><pukValue>32 32 32 32 32 32 32 32</pukValue>
+        <maxNumOfAttemps-retryNumLeft>170</maxNumOfAttemps-retryNumLeft></PUKConfiguration>
+    </pukCodes></pukCodes></ProfileElement>
+    <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>
