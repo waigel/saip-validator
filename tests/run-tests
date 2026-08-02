@@ -131,6 +131,7 @@ fires_exactly twice-mf.xml                  SAIP-CARD-01
 fires_exactly twice-iot.xml                 SAIP-CARD-02
 fires_exactly twice-pukCodes.xml            SAIP-CARD-03
 fires_exactly unknown-template.xml          SAIP-TPL-01
+fires_exactly template-without-pinstatus.xml SAIP-TPP-01
 
 
 # --- coverage: every declared rule id fires in some fixture ------------------
