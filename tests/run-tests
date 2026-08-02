@@ -147,6 +147,14 @@ fires_exactly extradite-to-unpersonalized.xml SAIP-APP-02
 fires_exactly rfm-unreachable-tar.xml        SAIP-RFM-01
 fires_exactly pin-mixed-scope.xml            SAIP-PIN-04
 fires_exactly iot-iccid-bad-padding.xml      SAIP-ICC-01
+fires_exactly ordering-after-mf-cd.xml       SAIP-ORD-11
+fires_exactly ordering-after-mf-telecom.xml  SAIP-ORD-12
+fires_exactly ordering-after-mf-usim.xml     SAIP-ORD-13
+fires_exactly ordering-after-mf-isim.xml     SAIP-ORD-14
+fires_exactly ordering-after-mf-csim.xml     SAIP-ORD-15
+fires_exactly ordering-after-mf-ssim.xml     SAIP-ORD-16
+fires_exactly pin-local-in-mf.xml            SAIP-PIN-05
+fires_exactly pin-global-in-adf.xml          SAIP-PIN-06
 fires_exactly rfm-before-adf.xml             SAIP-RFM-02
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
