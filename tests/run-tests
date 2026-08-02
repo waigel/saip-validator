@@ -79,6 +79,17 @@ check "validate: names the offending rule context" 1 \
 check "validate: rejection has no traceback" 0 \
     "$(printf '%s' "$out" | grep -c 'Traceback')"
 
+# --- the rule files themselves ------------------------------------------------
+#
+# An XML comment may not contain a double hyphen. A rule file that breaks that
+# makes saip-validate exit 2 for every input, which reads like "nothing fired"
+# rather than like a broken rule set -- so it is checked directly.
+
+for sch in "$root"/rules/*.sch; do
+    python3 -c 'import sys; from lxml import etree; etree.parse(sys.argv[1])' "$sch" 2>/dev/null
+    check "rules: $(basename "$sch") is well-formed XML" 0 "$?"
+done
+
 # --- composition rules -------------------------------------------------------
 #
 # Each counter-example asserts the exact set of rule ids that fired, not a
@@ -119,6 +130,7 @@ fires_exactly ordering-opt-iot.xml          SAIP-ORD-10
 fires_exactly twice-mf.xml                  SAIP-CARD-01
 fires_exactly twice-iot.xml                 SAIP-CARD-02
 fires_exactly twice-pukCodes.xml            SAIP-CARD-03
+fires_exactly unknown-template.xml          SAIP-TPL-01
 
 
 # --- coverage: every declared rule id fires in some fixture ------------------
