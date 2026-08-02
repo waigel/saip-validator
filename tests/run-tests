@@ -145,6 +145,8 @@ fires_exactly cattp-on-second-sd.xml         SAIP-SD-06
 fires_exactly mno-sd-extradited.xml          SAIP-APP-01
 fires_exactly extradite-to-unpersonalized.xml SAIP-APP-02
 fires_exactly rfm-unreachable-tar.xml        SAIP-RFM-01
+fires_exactly pin-mixed-scope.xml            SAIP-PIN-04
+fires_exactly iot-iccid-bad-padding.xml      SAIP-ICC-01
 fires_exactly rfm-before-adf.xml             SAIP-RFM-02
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
