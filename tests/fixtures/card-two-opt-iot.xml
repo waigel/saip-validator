@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid><iotOptions/></header></ProfileElement>
+  <ProfileElement><iot><iot-header><identification>1</identification></iot-header></iot></ProfileElement>
+  <ProfileElement><opt-iot><optiot-header><identification>2</identification></optiot-header></opt-iot></ProfileElement>
+  <ProfileElement><opt-iot><optiot-header><identification>3</identification></optiot-header></opt-iot></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

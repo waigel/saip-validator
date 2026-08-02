@@ -98,12 +98,12 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-71 rules across fourteen files, each citing the clause it comes from:
+74 rules across fourteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
 | `composition.sch` | one header first, one end last, unique PE identifications, Full versus IoT Minimal | 7.4, 7.5, 8.1.3, 8.2.1, 8.10 |
-| `ordering.sch` | PE dependencies and cardinality | 8.1 |
+| `ordering.sch` | PE dependencies, and cardinality where it is package-level | 8.1, 8.3.4 |
 | `templates.sch` | templateID against the assigned OIDs | Annex B |
 | `template-parameters.sch` | parameters a referenced template obliges the profile to supply | 9.1 |
 | `pin-puk.sch` | PIN and PUK key references, including the PUK a PIN names | 8.5.1, 8.5.2 |

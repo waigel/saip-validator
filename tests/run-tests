@@ -130,6 +130,9 @@ fires_exactly ordering-opt-iot.xml           SAIP-ORD-10
 fires_exactly twice-mf.xml                   SAIP-CARD-01
 fires_exactly twice-iot.xml                  SAIP-CARD-02
 fires_exactly twice-pukCodes.xml             SAIP-CARD-03
+fires_exactly card-two-cd.xml                SAIP-CARD-04
+fires_exactly card-two-telecom.xml           SAIP-CARD-05
+fires_exactly card-two-opt-iot.xml           SAIP-CARD-06
 fires_exactly unknown-template.xml           SAIP-TPL-01
 fires_exactly template-without-pinstatus.xml SAIP-TPP-01
 fires_exactly pin-unresolved-puk.xml         SAIP-PIN-01

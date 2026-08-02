@@ -89,7 +89,41 @@
                   test="count(ProfileElement/pukCodes) &lt;= 1">
         PE-PUKCodes may be provided at most once in a profile package.
       </sch:assert>
+
+      <!--
+        8.3.4.2 and 8.3.4.3: "This PE may be used only once after the creation of
+        the MF". Both are anchored to the MF, and the MF is itself once per
+        package by SAIP-CARD-01, so once-after-the-MF is once per package.
+      -->
+      <sch:assert id="SAIP-CARD-04" role="error" see="saip-3.4.1#8.3.4.2"
+                  test="count(ProfileElement/cd) &lt;= 1">
+        PE-CD may be provided at most once in a profile package.
+      </sch:assert>
+
+      <sch:assert id="SAIP-CARD-05" role="error" see="saip-3.4.1#8.3.4.3"
+                  test="count(ProfileElement/telecom) &lt;= 1">
+        PE-TELECOM may be provided at most once in a profile package.
+      </sch:assert>
+
+      <!-- 8.3.4.8.2: "This PE may be used only once after the PE-IoT", and
+           PE-IoT is once per package by SAIP-CARD-02. -->
+      <sch:assert id="SAIP-CARD-06" role="error" see="saip-3.4.1#8.3.4.8.2"
+                  test="count(ProfileElement/opt-iot) &lt;= 1">
+        PE-OPT-IoT may be provided at most once in a profile package.
+      </sch:assert>
     </sch:rule>
   </sch:pattern>
+
+  <!--
+    Thirteen further "only once" usage rules are deliberately absent, because
+    they are not package-level. PE-PHONEBOOK, PE-GSM-ACCESS and the four DF PEs
+    read "only once in the context of a USIM ADF"; the opt-* PEs read "once for
+    each USIM / ISIM / CSIM application"; PE-EAP reads "once for each EAP
+    method"; the NAA parameter PEs read "once after the creation of a NAA". A
+    profile with two USIMs may legitimately carry two PE-DF-5GS, so counting
+    those across the package would reject valid profiles. Checking them needs a
+    per-ADF scope, which is the modelling contexts.sch approximates positionally
+    and does not yet do by count.
+  -->
 
 </sch:schema>
