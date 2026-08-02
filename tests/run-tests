@@ -175,6 +175,10 @@ fires_exactly gfm-adf-no-pinstatus.xml       SAIP-GFM-04
 fires_exactly gfm-adf-shortefid.xml          SAIP-GFM-05
 fires_exactly gfm-link-pinstatus.xml         SAIP-GFM-06
 fires_exactly gfm-ef-pinstatus.xml           SAIP-GFM-07
+fires_exactly naa-aka-before-naa.xml         SAIP-NAA-01
+fires_exactly naa-cdma-before-csim.xml       SAIP-NAA-02
+fires_exactly naa-eaptls-before-ssim.xml     SAIP-NAA-03
+fires_exactly naa-eap-before-adf.xml         SAIP-NAA-04
 fires_exactly rfm-before-adf.xml             SAIP-RFM-02
 # --- coverage: every declared rule id fires in some fixture ------------------
 #

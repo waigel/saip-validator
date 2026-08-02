@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><eap><eap-header><identification>2</identification></eap-header></eap></ProfileElement>
+  <ProfileElement><usim><usim-header><identification>3</identification></usim-header></usim></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>
