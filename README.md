@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-100 rules across eighteen files, each citing the clause it comes from:
+107 rules across nineteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
@@ -114,6 +114,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `fcp-context.sch` | parameters an FCP may not carry in its context | 8.3.3 |
 | `fcp-mandatory.sch` | parameters an FCP must carry, in a Full Profile | 8.3.3 |
 | `fcp-values.sch` | the form of pinStatusTemplateDO, and BER-TLV content | 8.3.2 |
+| `file-descriptor.sch` | file control parameter coding | TS 102 222 6.3.2.2 |
 | `generic-file-management.sch` | minimum parameters for file creation without a template | 8.3.5 |
 | `security-domains.sch` | SD ordering, key uniqueness, MNO-SD-only parameters | 8.6.2, 8.6.3, 8.6.6, 8.6.7 |
 | `applications.sch` | extradition: the MNO-SD is not extradited, targets are PERSONALIZED | 8.7.3 |

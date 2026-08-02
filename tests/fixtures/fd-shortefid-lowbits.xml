@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header>
+    <ef-arr><fileDescriptor><fileDescriptor>42 21</fileDescriptor><fileID>2F 06</fileID><shortEFID>11</shortEFID></fileDescriptor></ef-arr></mf></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>
