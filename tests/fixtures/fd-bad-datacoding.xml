@@ -2,6 +2,6 @@
 <ProfilePackage>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
   <ProfileElement><mf><mf-header><identification>1</identification></mf-header>
-    <ef-arr><fileDescriptor><fileDescriptor>42 22</fileDescriptor><fileID>2F 06</fileID></fileDescriptor></ef-arr></mf></ProfileElement>
+    <ef-arr><fileDescriptor><fileDescriptor>41 22</fileDescriptor><fileID>2F 06</fileID></fileDescriptor></ef-arr></mf></ProfileElement>
   <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>

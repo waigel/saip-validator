@@ -17,12 +17,15 @@
   PE-GenericFileManagement, whose FileManagement is the schema's only user of
   createFCP.
 
-  Telling ADF, DF, EF and link apart could be done by decoding byte 1 of the
-  fileDescriptor per ETSI TS 102 222, but that document is not in hand, so the
-  discriminators below are the ones this specification states outright: 8.3.2
+  The discriminators below are the ones this specification states outright: 8.3.2
   says dfName "Only applies for ADFs", and linkPath is M for both link columns
   and F for all three others, so its presence identifies a link. efFileSize is
   M for Create EF and F everywhere else, which identifies an independent EF.
+
+  Table 11.5 of ETSI TS 102 221 offers a second, exact discriminator through the
+  File Descriptor byte. The rules above are left on the SAIP-stated ones, which
+  the corpus has exercised; the byte is used only where nothing else could serve,
+  in SAIP-GFM-08 below.
 
   Across the four published profiles this is 58, 58, 54 and 54 createFCP nodes,
   in four distinct shapes, every one of them satisfying every rule here. None of
@@ -73,9 +76,13 @@
   </sch:pattern>
 
   <!--
-    shortEFID is the one parameter a link may still carry: F for a DF Link but
-    C for an EF Link, and nothing here distinguishes the two, so it is left
-    alone rather than guessed at.
+    shortEFID is F for a DF Link but C for an EF Link, so the two have to be told
+    apart before it can be judged. Nothing SAIP states does that, which is why
+    the rule was missing; Table 11.5 of TS 102 221 does, through the File
+    Descriptor byte, where the type bits 111 with structure bits 000 mean a DF or
+    ADF. That is byte '38' or '78' once the free shareable bit is allowed for.
+
+    Every link in the corpus is an EF link, so SAIP-GFM-08 fires on none of them.
   -->
   <sch:pattern id="gfm-link">
     <sch:rule context="/ProfilePackage/ProfileElement/genericFileManagement//createFCP[linkPath]">
@@ -83,6 +90,14 @@
                   test="not(dfName or efFileSize or pinStatusTemplateDO)">
         dfName, efFileSize and pinStatusTemplateDO are forbidden in an FCP
         creating a link.
+      </sch:assert>
+
+      <sch:assert id="SAIP-GFM-08" role="error" see="saip-3.4.1#8.3.5"
+                  test="not(contains(' 38 78 ',
+                              concat(' ', substring(translate(normalize-space(fileDescriptor),
+                                                              'abcdef ', 'ABCDEF'), 1, 2), ' ')))
+                        or not(shortEFID)">
+        shortEFID is forbidden in an FCP creating a DF link.
       </sch:assert>
     </sch:rule>
   </sch:pattern>

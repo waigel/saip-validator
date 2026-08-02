@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-107 rules across nineteen files, each citing the clause it comes from:
+110 rules across nineteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
@@ -114,7 +114,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `fcp-context.sch` | parameters an FCP may not carry in its context | 8.3.3 |
 | `fcp-mandatory.sch` | parameters an FCP must carry, in a Full Profile | 8.3.3 |
 | `fcp-values.sch` | the form of pinStatusTemplateDO, and BER-TLV content | 8.3.2 |
-| `file-descriptor.sch` | file control parameter coding | TS 102 222 6.3.2.2 |
+| `file-descriptor.sch` | file control parameter coding | TS 102 222 6.3.2.2, TS 102 221 11.1.1.4.3 |
 | `generic-file-management.sch` | minimum parameters for file creation without a template | 8.3.5 |
 | `security-domains.sch` | SD ordering, key uniqueness, MNO-SD-only parameters | 8.6.2, 8.6.3, 8.6.6, 8.6.7 |
 | `applications.sch` | extradition: the MNO-SD is not extradited, targets are PERSONALIZED | 8.7.3 |
@@ -136,12 +136,18 @@ SAIP-PIN-08 and SAIP-PIN-09; they had been set aside over a hex-to-decimal
 conversion that turned out to be needed only in the other direction, from the
 decimal `keyReference` to hex, over a closed enumeration of 26 values.
 
-The other limits are unchanged and are the honest kind. Classifying a file as
-ADF, DF, EF or link would be exact if byte 1 of the `fileDescriptor` were decoded
-per ETSI TS 102 222, which is referenced but not in hand; the rules in
-`generic-file-management.sch` use the discriminators SAIP states outright
-instead, which leaves `shortEFID` on a link unchecked. PE-EAP has no cardinality
-rule because its scope is "each EAP method", which the package does not name.
+One limit named in earlier versions of this file is gone. Classifying a file as
+ADF, DF, EF or link needed byte 1 of the `fileDescriptor`, which SAIP delegates
+to ETSI TS 102 222, which delegates in turn to Table 11.5 of ETSI TS 102 221.
+Both are now in hand, so `file-descriptor.sch` checks the coding directly and
+SAIP-GFM-08 judges `shortEFID` on a link, which nothing SAIP states could decide.
+
+What remains is narrower. A `pinStatusTemplateDO` is a list of key references and
+Table 9.3 of TS 102 221 now says which byte values are defined, but checking
+every byte of a variable-length list needs a tokeniser, and XPath 1.0 has none;
+SAIP-FCP-14 checks the one malformation the specification calls out by name.
+PE-EAP has no cardinality rule because its scope is "each EAP method", which the
+package does not name.
 
 Three rules were deliberately rejected after reading the clause they would have
 cited; see "Rules considered and rejected" in the design document. The ICCID in

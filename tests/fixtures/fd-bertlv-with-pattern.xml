@@ -2,6 +2,6 @@
 <ProfilePackage>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
   <ProfileElement><mf><mf-header><identification>1</identification></mf-header>
-    <ef-arr><fileDescriptor><fileDescriptor>42 21</fileDescriptor><fileID>2F 06</fileID><proprietaryEFInfo><maximumFileSize>01 00</maximumFileSize><fileDetails>01</fileDetails><fillPattern>FF</fillPattern></proprietaryEFInfo></fileDescriptor></ef-arr></mf></ProfileElement>
+    <ef-arr><fileDescriptor><fileDescriptor>41 21</fileDescriptor><fileID>2F 06</fileID><proprietaryEFInfo><maximumFileSize>01 00</maximumFileSize><fileDetails>01</fileDetails><fillPattern>FF</fillPattern></proprietaryEFInfo></fileDescriptor></ef-arr></mf></ProfileElement>
   <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>

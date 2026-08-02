@@ -3,15 +3,12 @@
   File control parameters against ETSI TS 102 222, the document SAIP delegates
   their coding to.
 
-  This file exists because that document became available. It does not do what
-  was expected of it: SAIP's file classification hangs on byte 1 of the File
-  Descriptor, and TS 102 222 does not define that byte either. Both of its
-  tables say "The File Descriptor Byte shall be coded as defined in ETSI TS 102
-  221", so the ADF/DF/EF discrimination noted in generic-file-management.sch is
-  still open, and still for the same kind of reason, one document further along.
+  This file exists because those documents became available. TS 102 222 defines
+  everything around the File Descriptor byte but not the byte itself; both of its
+  tables defer with "The File Descriptor Byte shall be coded as defined in ETSI
+  TS 102 221", and Table 11.5 of that document supplies it.
 
-  What it does define is everything around that byte, and those are the rules
-  below. All seven hold across the 984 file descriptors in the published
+  Every rule here holds across the 984 file descriptors in the published
   profiles, which is the widest evidence any rule in this project has.
 
   Byte values are matched on hex digits rather than arithmetic. XPath 1.0 has no
@@ -60,7 +57,7 @@
   -->
   <sch:pattern id="short-efid-coding">
     <sch:rule context="/ProfilePackage//shortEFID[normalize-space(.) != '']">
-      <sch:let name="h" value="translate(normalize-space(.), ' abcdef', 'ABCDEF')"/>
+      <sch:let name="h" value="translate(normalize-space(.), 'abcdef ', 'ABCDEF')"/>
 
       <sch:assert id="SAIP-FD-03" role="error" see="ts-102-222#6.3.2.2.2"
                   test="substring($h, string-length($h)) = '0'
@@ -78,7 +75,7 @@
   -->
   <sch:pattern id="special-file-information">
     <sch:rule context="/ProfilePackage//specialFileInformation[normalize-space(.) != '']">
-      <sch:let name="h" value="translate(normalize-space(.), ' abcdef', 'ABCDEF')"/>
+      <sch:let name="h" value="translate(normalize-space(.), 'abcdef ', 'ABCDEF')"/>
 
       <sch:assert id="SAIP-FD-04" role="error" see="ts-102-222#6.3.2.2.2"
                   test="substring($h, 2, 1) = '0'
@@ -116,6 +113,61 @@
       <sch:assert id="SAIP-FD-07" role="error" see="ts-102-222#6.3.2.2.2"
                   test="not(maximumFileSize) or not(fillPattern or repeatPattern)">
         Filling and repeat patterns do not apply to a BER-TLV structured EF.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <!--
+    Table 11.5 of TS 102 221 enumerates the File Descriptor byte. Bit b8 set is
+    RFU outright. Below it, bits b6 to b4 give the file type and b3 to b1 the EF
+    structure, and most combinations of the two are marked RFU: a working or
+    internal EF, types 000 and 001, may be structureless, transparent, linear
+    fixed or cyclic; type 111 is a DF or ADF when the structure bits are 000 and
+    a BER-TLV EF when they are 001; types 010 to 110 are reserved throughout.
+
+    Bit b7, shareable or not, is free, so each defined coding appears twice, with
+    and without '40'. Twenty values in all, which is short enough to test by
+    containment rather than by taking the byte apart.
+
+    The corpus uses five of them: '41' transparent, '42' linear fixed, '46'
+    cyclic, '78' DF or ADF, and '79' BER-TLV.
+  -->
+  <sch:pattern id="file-descriptor-coding">
+    <sch:let name="defined" value="' 00 01 02 06 08 09 0A 0E 38 39 40 41 42 46 48 49 4A 4E 78 79 '"/>
+
+    <sch:rule context="/ProfilePackage//fileDescriptor[not(*)][normalize-space(.) != '']">
+      <sch:let name="b1" value="substring(translate(normalize-space(.), 'abcdef ', 'ABCDEF'), 1, 2)"/>
+
+      <sch:assert id="SAIP-FD-08" role="error" see="ts-102-221#11.1.1.4.3"
+                  test="contains($defined, concat(' ', $b1, ' '))">
+        The File Descriptor byte shall be one of the codings defined in Table
+        11.5; the rest of the range is reserved.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <!--
+    TS 102 222 makes the record length conditional, "Mandatory for linear fixed
+    and cyclic files, otherwise it is not applicable", and TS 102 221 says the
+    same from the reading side. So the four-byte form and a record structure
+    imply one another, and either without the other is an error.
+
+    The structure is bits b3 to b1, which are the low three bits of the last hex
+    digit of the byte: digits 2 and A carry linear fixed, 6 and E carry cyclic.
+
+    In the corpus the correspondence is exact, 616 two-byte descriptors with no
+    record structure and 368 four-byte ones with it, links included.
+  -->
+  <sch:pattern id="record-length-presence">
+    <sch:rule context="/ProfilePackage//fileDescriptor[not(*)][normalize-space(.) != '']">
+      <sch:let name="h" value="translate(normalize-space(.), 'abcdef ', 'ABCDEF')"/>
+      <sch:let name="rec" value="contains(' 2 6 A E ', concat(' ', substring($h, 2, 1), ' '))"/>
+
+      <sch:assert id="SAIP-FD-09" role="error" see="ts-102-222#6.3.2.2.2"
+                  test="(string-length($h) = 8 and $rec)
+                        or (string-length($h) = 4 and not($rec))">
+        A record length shall be present for a linear fixed or cyclic file and
+        absent for every other structure.
       </sch:assert>
     </sch:rule>
   </sch:pattern>

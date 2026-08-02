@@ -208,13 +208,15 @@ fires_exactly scoped-two-opt-csim.xml        SAIP-SCP-09
 fires_exactly scoped-two-cdmaParameter.xml   SAIP-SCP-10
 fires_exactly pinstatus-global-not-in-mf.xml SAIP-PIN-08
 fires_exactly pinstatus-local-undefined.xml  SAIP-PIN-09
-fires_exactly fd-length-three.xml            SAIP-FD-01
+fires_exactly fd-length-three.xml            "SAIP-FD-01 SAIP-FD-09"
 fires_exactly fd-bad-datacoding.xml          SAIP-FD-02
 fires_exactly fd-shortefid-lowbits.xml       SAIP-FD-03
 fires_exactly fd-specialinfo-rfu.xml         SAIP-FD-04
 fires_exactly fd-both-patterns.xml           SAIP-FD-05
 fires_exactly fd-bertlv-no-details.xml       SAIP-FD-06
 fires_exactly fd-bertlv-with-pattern.xml     SAIP-FD-07
+fires_exactly fd-reserved-coding.xml         SAIP-FD-08
+fires_exactly gfm-dflink-shortefid.xml       SAIP-GFM-08
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
 # fires_exactly above is hardcoded per fixture, so a rule nobody wrote a
