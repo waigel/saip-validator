@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-23 rules across four files, each citing the clause it comes from:
+33 rules across six files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
@@ -106,13 +106,17 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `ordering.sch` | PE dependencies and cardinality | 8.1 |
 | `templates.sch` | templateID against the assigned OIDs | Annex B |
 | `template-parameters.sch` | parameters a referenced template obliges the profile to supply | 9.1 |
+| `pin-puk.sch` | PIN and PUK key references, including the PUK a PIN names | 8.5.1, 8.5.2 |
+| `security-domains.sch` | SD ordering, key uniqueness, MNO-SD-only parameters | 8.6.2, 8.6.3, 8.6.6, 8.6.7 |
 
 **What is not covered.** The dependencies phrased "after the creation of the MF"
 need two possible antecedents and are unwritten. The template-parameter list
 covers only the tables read so far, out of roughly forty pages of Annex A. The
-IoT Minimal ICCID encoding rule of 8.2.1 is unwritten. Nothing in clause 8 below
-the package level -- security domains, applications, RFM, PIN and PUK scope --
-has been looked at.
+IoT Minimal ICCID encoding rule of 8.2.1 is unwritten. The PIN scope rules of
+8.5.1 -- global references only in the MF context, local references only in a
+DF or ADF -- need the notion of a PIN context, which is positional and not yet
+modelled. Clause 8.7 applications, 8.8 RFM parameters and 8.9 non-standard
+content have not been read.
 
 Two rules were deliberately rejected after reading the clause they would have
 cited; see "Rules considered and rejected" in the design document. Both looked

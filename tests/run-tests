@@ -136,6 +136,12 @@ fires_exactly pin-unresolved-puk.xml        SAIP-PIN-01
 fires_exactly pin-duplicate-key.xml         SAIP-PIN-02
 fires_exactly retry-exceeds-max.xml         SAIP-PIN-03
 fires_exactly puk-duplicate-key.xml         SAIP-PUK-01
+fires_exactly rfm-before-sd.xml             SAIP-SD-01
+fires_exactly application-before-sd.xml     SAIP-SD-02
+fires_exactly duplicate-key.xml             SAIP-SD-03
+fires_exactly duplicate-key-component.xml   SAIP-SD-04
+fires_exactly openpersodata-on-second-sd.xml SAIP-SD-05
+fires_exactly cattp-on-second-sd.xml        SAIP-SD-06
 
 
 # --- coverage: every declared rule id fires in some fixture ------------------

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><securityDomain><sd-Header><identification>1</identification></sd-Header>
+    <keyList><KeyObject><keyIdentifier>01</keyIdentifier><keyVersionNumber>01</keyVersionNumber>
+      <keyCompontents>
+        <SEQUENCE><keyType>80</keyType><keyData>01</keyData></SEQUENCE>
+        <SEQUENCE><keyType>80</keyType><keyData>02</keyData></SEQUENCE>
+      </keyCompontents></KeyObject></keyList></securityDomain></ProfileElement>
+    <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>
