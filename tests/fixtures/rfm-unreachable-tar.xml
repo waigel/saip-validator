@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><securityDomain><sd-Header><identification>1</identification></sd-Header><instance/></securityDomain></ProfileElement>
+  <ProfileElement><rfm><rfm-header><identification>2</identification></rfm-header>
+    <instanceAID>A0 00 00 05 59 10</instanceAID>
+    <minimumSecurityLevel>02</minimumSecurityLevel>
+    <uiccAccessDomain>00</uiccAccessDomain>
+    <uiccAdminAccessDomain>00</uiccAdminAccessDomain></rfm></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

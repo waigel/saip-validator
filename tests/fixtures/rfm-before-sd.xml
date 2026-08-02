@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ProfilePackage>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
-  <ProfileElement><rfm><rfm-header><identification>1</identification></rfm-header></rfm></ProfileElement>
+  <ProfileElement><rfm><rfm-header><identification>1</identification></rfm-header>
+    <instanceAID>A0 00 00 05 59 10 10 00 01</instanceAID>
+    <tarList><OCTET_STRING>B0 01 20</OCTET_STRING></tarList></rfm></ProfileElement>
   <ProfileElement><securityDomain><sd-Header><identification>5</identification></sd-Header><instance/></securityDomain></ProfileElement>
     <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>

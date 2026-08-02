@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><securityDomain><sd-Header><identification>1</identification></sd-Header>
+    <instance><instanceAID>A0 00 00 01 51 00 00 00</instanceAID>
+      <extraditeSecurityDomainAID>A0 00 00 01 51 00 00 01</extraditeSecurityDomainAID>
+      <lifeCycleState>0F</lifeCycleState></instance></securityDomain></ProfileElement>
+    <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

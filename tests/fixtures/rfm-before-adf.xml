@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><securityDomain><sd-Header><identification>2</identification></sd-Header><instance/></securityDomain></ProfileElement>
+  <ProfileElement><rfm><rfm-header><identification>3</identification></rfm-header><instanceAID>A0 00 00 05 59 10 10 00 01 02 03 04 05 06 07</instanceAID><tarList><OCTET_STRING>B0 01 20</OCTET_STRING></tarList></rfm></ProfileElement>
+  <ProfileElement><usim><usim-header><identification>4</identification></usim-header></usim></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>
