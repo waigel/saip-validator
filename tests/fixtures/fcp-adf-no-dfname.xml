@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <ProfilePackage>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
   <ProfileElement><mf><mf-header><identification>1</identification></mf-header>
-    <adf-usim><fileDescriptor><fileID>2F 05</fileID><pinStatusTemplateDO>81 01 0A</pinStatusTemplateDO></fileDescriptor></adf-usim>
+    <adf-usim><fileDescriptor><fileID>2F 05</fileID><pinStatusTemplateDO>01 0A</pinStatusTemplateDO></fileDescriptor></adf-usim>
 </mf></ProfileElement>
-  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+  <ProfileElement><pinCodes><pin-Header><identification>2</identification></pin-Header><pinCodes><pinconfig><PINConfiguration><keyReference>1</keyReference><pinValue>30 30 30 30 FF FF FF FF</pinValue><maxNumOfAttemps-retryNumLeft>51</maxNumOfAttemps-retryNumLeft></PINConfiguration><PINConfiguration><keyReference>10</keyReference><pinValue>30 30 30 30 FF FF FF FF</pinValue><maxNumOfAttemps-retryNumLeft>51</maxNumOfAttemps-retryNumLeft></PINConfiguration></pinconfig></pinCodes></pinCodes></ProfileElement><ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>

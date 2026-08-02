@@ -8,6 +8,14 @@ Every sentence containing "shall" was extracted from *eUICC Profile Package:
 Interoperable Format* v3.4.1, attributed to its clause, and given one of the
 dispositions below. There are **265** of them and none is unaccounted for.
 
+Nothing in this document is listed as checkable-but-unchecked. The two entries
+that once were, the PIN references packed into a `pinStatusTemplateDO`, are now
+SAIP-PIN-08 and SAIP-PIN-09. They had been set aside on the grounds that XPath
+1.0 cannot convert hex to decimal, which was the wrong way round: the conversion
+only has to run from the decimal `keyReference` to its hex form, and
+PINKeyReferenceValue is a closed enumeration of 26 values, so the rule is a fixed
+conjunction rather than a loop.
+
 Two dispositions deserve care when reading. *Describes the eUICC* is the largest
 group by far, and that is expected: most of clause 8.10 and 12.2 tells a card how
 to respond, which no profile validator can or should enforce. *Not decidable from
@@ -21,8 +29,7 @@ breaking may appear truncated. The clause number is the anchor to go back to.
 
 | Disposition | Count |
 | --- | ---: |
-| Mapped to a rule | 69 |
-| Checkable, but not checked | 2 |
+| Mapped to a rule | 71 |
 | Not decidable from the package | 18 |
 | Needs a referenced document | 19 |
 | Describes the eUICC, not the package | 144 |
@@ -30,7 +37,7 @@ breaking may appear truncated. The clause number is the anchor to go back to.
 | Descriptive | 4 |
 | **Total** | **265** |
 
-## Mapped to a rule (69)
+## Mapped to a rule (71)
 
 Each of these is checked. The rule ids are the ones the report prints.
 
@@ -67,6 +74,8 @@ Each of these is checked. The rule ids are the ones the report prints.
 | 8.1.3 | Only one occurrence of either PE-SSIM-EAPTLSParameters or PE-AKAParameter shall be provided per SSIM. | SAIP-NAA-05 |
 | 8.1.3 | PE-PINCodes PIN codes shall be created in the context according to their scope. | SAIP-PIN-05, SAIP-PIN-06 |
 | 8.1.3 | PE-EAP The use of this PE is optional and shall come after creation of the ADF that supports the EAP feature. | SAIP-NAA-04 |
+| 8.1.3 | PE-PINCode and "pinStatusTemplateDO" usage rules: • All the Global PINs referenced by a "pinStatusTemplateDO" shall be defined in the "PIN Context" of the MF. | SAIP-PIN-08 |
+| 8.1.3 | • All the Local PINs referenced by a "pinStatusTemplateDO" shall either be defined in a parent ADF or DF or created in a following PE-PINCodes. | SAIP-PIN-09 |
 | 8.2.1 | Usage rules: This PE shall be used once and shall be the first PE of the Profile Package. | SAIP-HDR-01, SAIP-HDR-02 |
 | 8.3.1 | In that case, these values shall be provided in the Profile. | SAIP-TPP-01 |
 | 8.3.2 | The "pinStatusTemplateDO" shall contain only a list of PIN Key Reference values coded according to table 9.3 of ETSI TS 102 221 [102 221] and used within the ADF/DF. | SAIP-FCP-14 |
@@ -105,15 +114,6 @@ Each of these is checked. The rule ids are the ones the report prints.
 | 8.10 | -- ASN1START PE-End ::= SEQUENCE { end-header PEHeader } -- ASN1STOP Usage rules: This PE shall be used as the last element of the Profile Package. | SAIP-END-01, SAIP-END-02 |
 | 9.1 | • Parameters: Indicates the parameters that shall be provided by the Profile Creator when referencing the template in the Profile Package in addition to those listed in section 8.3.3. | SAIP-TPP-01, SAIP-FCP-10..13 |
 | 11.2.4 | Only one method shall be present in a real Profile Package. | SAIP-CARD-07 |
-
-## Checkable, but not checked (2)
-
-Real gaps. Both are stated here with the reason rather than left implicit.
-
-| Clause | Sentence | Note |
-| --- | --- | --- |
-| 8.1.3 | PE-PINCode and "pinStatusTemplateDO" usage rules: • All the Global PINs referenced by a "pinStatusTemplateDO" shall be defined in the "PIN Context" of the MF. | matching the key references packed in the pinStatusTemplateDO octet string against PE-PINCodes needs hex-to-decimal conversion, which XPath 1.0 has no function for |
-| 8.1.3 | • All the Local PINs referenced by a "pinStatusTemplateDO" shall either be defined in a parent ADF or DF or created in a following PE-PINCodes. | same hex-to-decimal conversion as the global case above |
 
 ## Not decidable from the package (18)
 

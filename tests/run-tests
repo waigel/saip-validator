@@ -206,6 +206,8 @@ fires_exactly scoped-two-opt-usim.xml        SAIP-SCP-07
 fires_exactly scoped-two-opt-isim.xml        SAIP-SCP-08
 fires_exactly scoped-two-opt-csim.xml        SAIP-SCP-09
 fires_exactly scoped-two-cdmaParameter.xml   SAIP-SCP-10
+fires_exactly pinstatus-global-not-in-mf.xml SAIP-PIN-08
+fires_exactly pinstatus-local-undefined.xml  SAIP-PIN-09
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
 # fires_exactly above is hardcoded per fixture, so a rule nobody wrote a

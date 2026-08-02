@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-98 rules across seventeen files, each citing the clause it comes from:
+100 rules across eighteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
@@ -109,6 +109,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `template-parameters.sch` | parameters a referenced template obliges the profile to supply | 9.1 |
 | `pin-puk.sch` | PIN and PUK key references, including the PUK a PIN names | 8.5.1, 8.5.2 |
 | `pin-scope.sch` | one PIN context per PE, and the IoT header ICCID's padding | 8.2.1, 8.5.1 |
+| `pin-status-references.sch` | PIN references named by a pinStatusTemplateDO are defined | 8.1.3 |
 | `contexts.sch` | dependencies on the file system root, and which PIN context admits which reference | 8.1, 8.5.1 |
 | `fcp-context.sch` | parameters an FCP may not carry in its context | 8.3.3 |
 | `fcp-mandatory.sch` | parameters an FCP must carry, in a Full Profile | 8.3.3 |
@@ -123,17 +124,16 @@ that is profiles somebody else published. The `EPT` variable names the converter
 **What is not covered.** Every sentence containing "shall" was extracted from
 the specification, attributed to its clause, and given a disposition. All 265 are
 listed in [docs/audit/shall-sentences.md](docs/audit/shall-sentences.md), which
-is the evidence for this section: 69 are checked by a rule, 144 describe what the
+is the evidence for this section: 71 are checked by a rule, 144 describe what the
 eUICC does rather than what a package must contain, 19 delegate to a document
 this project does not hold, 18 are not decidable from the package alone, and the
 rest are table legends or descriptive prose.
 
-Two are checkable and not checked, and both fail on the same obstacle. 8.1.3
-requires that the PIN key references packed into a `pinStatusTemplateDO` be
-defined in the right PIN context, global ones in the MF and local ones in a
-parent ADF or DF. The references are bytes inside an octet string, the
-PE-PINCodes `keyReference` is a decimal integer, and XPath 1.0 has no
-hex-to-decimal conversion to bridge them.
+Nothing is listed as checkable and unchecked. The last two entries in that
+column, the PIN references packed into a `pinStatusTemplateDO`, are now
+SAIP-PIN-08 and SAIP-PIN-09; they had been set aside over a hex-to-decimal
+conversion that turned out to be needed only in the other direction, from the
+decimal `keyReference` to hex, over a closed enumeration of 26 values.
 
 The other limits are unchanged and are the honest kind. Classifying a file as
 ADF, DF, EF or link would be exact if byte 1 of the `fileDescriptor` were decoded

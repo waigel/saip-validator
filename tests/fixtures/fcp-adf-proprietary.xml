@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <ProfilePackage>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
   <ProfileElement><mf><mf-header><identification>1</identification></mf-header>
-    <adf-usim><fileDescriptor><fileID>2F 05</fileID><dfName>A0 00 00 00 87</dfName><pinStatusTemplateDO>81 01 0A</pinStatusTemplateDO><proprietaryEFInfo><specialFileInformation>40</specialFileInformation></proprietaryEFInfo></fileDescriptor></adf-usim></mf></ProfileElement>
-  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+    <adf-usim><fileDescriptor><fileID>2F 05</fileID><dfName>A0 00 00 00 87</dfName><pinStatusTemplateDO>01 0A</pinStatusTemplateDO><proprietaryEFInfo><specialFileInformation>40</specialFileInformation></proprietaryEFInfo></fileDescriptor></adf-usim></mf></ProfileElement>
+  <ProfileElement><pinCodes><pin-Header><identification>2</identification></pin-Header><pinCodes><pinconfig><PINConfiguration><keyReference>1</keyReference><pinValue>30 30 30 30 FF FF FF FF</pinValue><maxNumOfAttemps-retryNumLeft>51</maxNumOfAttemps-retryNumLeft></PINConfiguration><PINConfiguration><keyReference>10</keyReference><pinValue>30 30 30 30 FF FF FF FF</pinValue><maxNumOfAttemps-retryNumLeft>51</maxNumOfAttemps-retryNumLeft></PINConfiguration></pinconfig></pinCodes></pinCodes></ProfileElement><ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>
