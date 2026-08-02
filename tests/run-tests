@@ -97,9 +97,15 @@ fires_exactly() {
     check "rules: $fixture fires exactly [$expected]" "$expected " "$(fired_ids "$fixture")"
 }
 
-fires_exactly no-header.xml        SAIP-HDR-01
-fires_exactly two-headers.xml      SAIP-HDR-01
-fires_exactly header-not-first.xml SAIP-HDR-02
+fires_exactly no-header.xml                 SAIP-HDR-01
+fires_exactly two-headers.xml               SAIP-HDR-01
+fires_exactly header-not-first.xml          SAIP-HDR-02
+fires_exactly no-end.xml                    SAIP-END-01
+fires_exactly end-not-last.xml              SAIP-END-02
+fires_exactly duplicate-identification.xml  SAIP-PEID-01
+fires_exactly full-profile-with-iot.xml     SAIP-IOT-01
+fires_exactly iot-profile-without-iot-pe.xml SAIP-IOT-02
+fires_exactly iot-profile-with-mf.xml       SAIP-IOT-03
 
 # --- coverage: every declared rule id fires in some fixture ------------------
 #

@@ -2,4 +2,5 @@
 <ProfilePackage>
   <ProfileElement><mf></mf></ProfileElement>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
 </ProfilePackage>
