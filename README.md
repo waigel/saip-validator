@@ -98,8 +98,25 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-Two composition rules. The pipeline and the test harness are in place, so
-further rules are additions to `rules/` plus their counter-examples.
+23 rules across four files, each citing the clause it comes from:
+
+| File | Covers | Clauses |
+| --- | --- | --- |
+| `composition.sch` | one header first, one end last, unique PE identifications, Full versus IoT Minimal | 7.4, 7.5, 8.1.3, 8.2.1, 8.10 |
+| `ordering.sch` | PE dependencies and cardinality | 8.1 |
+| `templates.sch` | templateID against the assigned OIDs | Annex B |
+| `template-parameters.sch` | parameters a referenced template obliges the profile to supply | 9.1 |
+
+**What is not covered.** The dependencies phrased "after the creation of the MF"
+need two possible antecedents and are unwritten. The template-parameter list
+covers only the tables read so far, out of roughly forty pages of Annex A. The
+IoT Minimal ICCID encoding rule of 8.2.1 is unwritten. Nothing in clause 8 below
+the package level -- security domains, applications, RFM, PIN and PUK scope --
+has been looked at.
+
+Two rules were deliberately rejected after reading the clause they would have
+cited; see "Rules considered and rejected" in the design document. Both looked
+obvious and both would have contradicted the specification.
 
 ## Scope
 
