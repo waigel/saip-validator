@@ -9,9 +9,9 @@ A profile package can be well-formed and still useless. Its structure is decided
 by the ASN.1 module, and its `SIZE` and range constraints by
 [`asn1vn -C`](https://github.com/waigel/asn1c-vn). What neither can decide is
 whether the profile makes sense: that there is exactly one header and it comes
-first, that the ICCID in the header matches the one in EF-ICCID, that every file
-a record points at exists. Those rules are prose in the specification, and until
-now nothing checked them.
+first, that a PIN names a PUK the package actually defines, that an RFM lands
+after the security domain and ADF it depends on. Those rules are prose in the
+specification, and until now nothing checked them.
 
 This is the same split KoSIT draws for XRechnung — XSD for structure, Schematron
 for content — with ASN.1 in the role of XSD. As there, **the rule set is the
@@ -33,7 +33,7 @@ ept -iber -oxer -p ProfileElement profile.der | ./bin/saip-wrap > profile.xml
 ```
 
 ```
-profile.xml: 0 errors, 0 warnings, 2 of 2 assertions evaluated
+profile.xml: 0 errors, 0 warnings, 54 of 71 assertions evaluated
 ```
 
 ### Failing profile
@@ -45,7 +45,7 @@ A profile whose header is not first:
 ```
 
 ```
-tests/fixtures/header-not-first.xml: 1 error, 0 warnings, 2 of 2 assertions evaluated
+tests/fixtures/header-not-first.xml: 1 error, 0 warnings, 11 of 71 assertions evaluated
 
   SAIP-HDR-02  error    The Profile Header shall be the first ProfileElement.
                at       /ProfilePackage
@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-33 rules across six files, each citing the clause it comes from:
+71 rules across fourteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
@@ -107,20 +107,46 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `templates.sch` | templateID against the assigned OIDs | Annex B |
 | `template-parameters.sch` | parameters a referenced template obliges the profile to supply | 9.1 |
 | `pin-puk.sch` | PIN and PUK key references, including the PUK a PIN names | 8.5.1, 8.5.2 |
+| `pin-scope.sch` | one PIN context per PE, and the IoT header ICCID's padding | 8.2.1, 8.5.1 |
+| `contexts.sch` | dependencies on the file system root, and which PIN context admits which reference | 8.1, 8.5.1 |
+| `fcp-context.sch` | parameters an FCP may not carry in its context | 8.3.3 |
+| `fcp-mandatory.sch` | parameters an FCP must carry, in a Full Profile | 8.3.3 |
+| `generic-file-management.sch` | minimum parameters for file creation without a template | 8.3.5 |
 | `security-domains.sch` | SD ordering, key uniqueness, MNO-SD-only parameters | 8.6.2, 8.6.3, 8.6.6, 8.6.7 |
+| `applications.sch` | extradition: the MNO-SD is not extradited, targets are PERSONALIZED | 8.7.3 |
+| `rfm.sch` | an RFM instance reachable over a TAR-based protocol, placed after an ADF | 8.8 |
+| `naa-parameters.sch` | NAA parameter PEs and PE-EAP placed after the NAA they configure | 8.4.1, 8.3.4.7 |
 
-**What is not covered.** The dependencies phrased "after the creation of the MF"
-need two possible antecedents and are unwritten. The template-parameter list
-covers only the tables read so far, out of roughly forty pages of Annex A. The
-IoT Minimal ICCID encoding rule of 8.2.1 is unwritten. The PIN scope rules of
-8.5.1 -- global references only in the MF context, local references only in a
-DF or ADF -- need the notion of a PIN context, which is positional and not yet
-modelled. Clause 8.7 applications, 8.8 RFM parameters and 8.9 non-standard
-content have not been read.
+**What is not covered.** Every normative table in Annex A has now been
+transcribed, and clause 8's subsections have all been read. What remains
+unchecked is unchecked for a stated reason rather than for want of reading.
 
-Two rules were deliberately rejected after reading the clause they would have
-cited; see "Rules considered and rejected" in the design document. Both looked
-obvious and both would have contradicted the specification.
+Clause 8.9, non-standard content, carries no checkable requirement: it is by
+definition proprietary. Clause 8.11 defines `PEStatus` and `EUICCResponse`,
+which are what the eUICC sends *back* after installation; nothing there is an
+obligation on a profile package, so it yields no rules.
+
+Two gaps come from documents this project does not have. Classifying a file as
+ADF, DF, EF or link would be exact if byte 1 of the `fileDescriptor` were
+decoded per ETSI TS 102 222, which is referenced but not in hand; the rules in
+`generic-file-management.sch` instead use the discriminators SAIP states
+outright, which leaves `shortEFID` on a link unchecked because a DF Link forbids
+it while an EF Link permits it. For the same reason `linkPath` targets are not
+resolved.
+
+Deciding *which* kind of PIN reference a given PE-PINCodes ought to hold is
+caught only where the containing context makes it decidable; a package that uses
+one consistent kind throughout passes regardless of whether that kind is right
+for it.
+
+Three further rules were deliberately rejected after reading the clause they
+would have cited; see "Rules considered and rejected" in the design document.
+The ICCID in the header is not compared against EF-ICCID because 8.2.1 says that
+value "is not checked" and "is not used"; Annex A's file lists are not required
+of a profile because 9.1 says only *differences* from the template need be
+included; and PE-RFM cannot be tied to *its own* ADF because that ADF's AID is
+supplied by the template and never appears in the package. SAIP-RFM-02 checks
+the weaker half that is decidable, that some ADF precedes.
 
 ## Scope
 

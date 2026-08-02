@@ -215,6 +215,12 @@ not a single element and a naive rule would flag valid profiles that build the M
 generically. Deferred until the generic file management PE is understood well
 enough to name the antecedent correctly.
 
+**PE-RFM must follow the PE containing its ADF.** 8.8 says so, and the SD half of
+the same sentence is written. The ADF half is not checkable from this view: a
+PE-USIM creates its ADF from a template, so the ADF's AID never appears in the
+document. Writing it would need the Annex A template definitions modelled, which
+is a different undertaking from reading a clause.
+
 ## Follow-ups
 
 Raised by the final review of the first increment and deliberately not fixed
