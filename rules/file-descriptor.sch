@@ -172,4 +172,53 @@
     </sch:rule>
   </sch:pattern>
 
+  <!--
+    SAIP describes securityAttributesReferenced as "Either containing EF ARR ID[2]
+    + record number[1] or record number[1] only and EF ARR ID implicitly known
+    from the context". Two forms, three bytes or one; two bytes is neither. The
+    module declares OCTET STRING (SIZE (1..3)) and so admits it, which makes this
+    another rule that is tighter than the ASN.1.
+
+    This one needs no referenced document at all. It was missed on the first pass
+    through 8.3.2 because the constraint is stated in a comment above the field
+    rather than in a numbered requirement. All 1028 occurrences in the corpus use
+    the three-byte form.
+  -->
+  <sch:pattern id="security-attributes-length">
+    <sch:rule context="/ProfilePackage//securityAttributesReferenced[normalize-space(.) != '']">
+      <sch:let name="n" value="string-length(translate(normalize-space(.), ' ', '')) div 2"/>
+
+      <sch:assert id="SAIP-FD-10" role="error" see="saip-3.4.1#8.3.2"
+                  test="$n = 1 or $n = 3">
+        securityAttributesReferenced shall be a record number alone, or an EF ARR
+        file ID followed by a record number.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
+  <!--
+    Table 11.7b of TS 102 221 codes the Life Cycle Status Integer. With the high
+    nibble zero the defined values are '00' no information, '01' creation, '03'
+    initialization, '04' to '07' operational, and '0C' to '0F' termination;
+    '02' and '08' to '0B' fall under "Any other value: RFU". A non-zero high
+    nibble is proprietary and deliberately left alone.
+
+    SAIP's own default, '05', is operational and activated.
+
+    No profile in the corpus sets lcsi at all, so this rule rests on the table and
+    its counter-example, with no published profile exercising it.
+  -->
+  <sch:pattern id="life-cycle-status">
+    <sch:rule context="/ProfilePackage//lcsi[normalize-space(.) != '']">
+      <sch:let name="h" value="translate(normalize-space(.), 'abcdef ', 'ABCDEF')"/>
+
+      <sch:assert id="SAIP-FD-11" role="error" see="ts-102-221#11.1.1.4.9"
+                  test="substring($h, 1, 1) != '0'
+                        or contains(' 00 01 03 04 05 06 07 0C 0D 0E 0F ',
+                                    concat(' ', $h, ' '))">
+        The Life Cycle Status Integer shall be a value defined in Table 11.7b.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
 </sch:schema>

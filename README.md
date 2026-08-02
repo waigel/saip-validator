@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-110 rules across nineteen files, each citing the clause it comes from:
+112 rules across nineteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |

@@ -217,6 +217,8 @@ fires_exactly fd-bertlv-no-details.xml       SAIP-FD-06
 fires_exactly fd-bertlv-with-pattern.xml     SAIP-FD-07
 fires_exactly fd-reserved-coding.xml         SAIP-FD-08
 fires_exactly gfm-dflink-shortefid.xml       SAIP-GFM-08
+fires_exactly fd-secattr-two-bytes.xml       SAIP-FD-10
+fires_exactly fd-lcsi-reserved.xml           SAIP-FD-11
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
 # fires_exactly above is hardcoded per fixture, so a rule nobody wrote a
