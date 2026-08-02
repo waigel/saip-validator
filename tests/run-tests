@@ -129,7 +129,7 @@ fires_exactly ordering-df-5gprose.xml        SAIP-ORD-09
 fires_exactly ordering-opt-iot.xml           SAIP-ORD-10
 fires_exactly twice-mf.xml                   SAIP-CARD-01
 fires_exactly twice-iot.xml                  SAIP-CARD-02
-fires_exactly twice-pukCodes.xml             SAIP-CARD-03
+fires_exactly twice-pukCodes.xml             "SAIP-CARD-03 SAIP-PUK-02"
 fires_exactly card-two-cd.xml                SAIP-CARD-04
 fires_exactly card-two-telecom.xml           SAIP-CARD-05
 fires_exactly card-two-opt-iot.xml           SAIP-CARD-06
@@ -188,6 +188,13 @@ fires_exactly iccid-interior-f-full.xml      SAIP-ICC-02
 fires_exactly ssim-two-auth-pes.xml          SAIP-NAA-05
 fires_exactly pinstatus-wrapped-do.xml       SAIP-FCP-14
 fires_exactly bertlv-with-offset.xml         SAIP-FCP-15
+fires_exactly aka-milenage-short-key.xml     SAIP-AKA-01
+fires_exactly aka-tuak-bad-key.xml           SAIP-AKA-02
+fires_exactly aka-milenage-bad-opc.xml       SAIP-AKA-03
+fires_exactly aka-tuak-bad-opc.xml           SAIP-AKA-04
+fires_exactly aka-ssimparams-on-usim.xml     SAIP-AKA-05
+fires_exactly pin-two-in-one-context.xml     SAIP-PIN-07
+fires_exactly rfm-empty-tarlist.xml          SAIP-RFM-03
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
 # fires_exactly above is hardcoded per fixture, so a rule nobody wrote a

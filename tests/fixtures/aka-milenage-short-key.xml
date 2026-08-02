@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><usim><usim-header><identification>2</identification></usim-header></usim></ProfileElement>
+  <ProfileElement><akaParameter><aka-header><identification>3</identification></aka-header><algoConfiguration><algoParameter><algorithmID>1</algorithmID><algorithmOptions>02</algorithmOptions><key>00 01 02 03 04 05 06 07</key><opc>00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F</opc></algoParameter></algoConfiguration></akaParameter></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

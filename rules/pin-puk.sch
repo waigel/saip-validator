@@ -72,4 +72,27 @@
     </sch:rule>
   </sch:pattern>
 
+  <!--
+    8.5.2: "This PE shall be used during the file system creation right after
+    the creation of the MF in case of a Full Profile Package", and "In case of
+    an IoT Minimal Profile Package, if used, it shall be placed right after the
+    Profile header."
+
+    "Right after" is adjacency, not mere precedence, so this compares against
+    the immediately preceding ProfileElement rather than searching the axis. The
+    two published Full Profiles place it exactly there: header, MF, PUK codes.
+  -->
+  <sch:pattern id="puk-placement">
+    <sch:rule context="/ProfilePackage/ProfileElement/pukCodes">
+      <sch:assert id="SAIP-PUK-02" role="error" see="saip-3.4.1#8.5.2"
+                  test="(/ProfilePackage/ProfileElement/header/iotOptions
+                         and ../preceding-sibling::ProfileElement[1]/header)
+                        or (not(/ProfilePackage/ProfileElement/header/iotOptions)
+                            and ../preceding-sibling::ProfileElement[1]/mf)">
+        PE-PUKCodes shall come right after the MF in a Full Profile, or right
+        after the Profile Header in an IoT Minimal Profile.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
 </sch:schema>

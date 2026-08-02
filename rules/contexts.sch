@@ -109,4 +109,34 @@
     </sch:rule>
   </sch:pattern>
 
+  <!--
+    8.5.1: "The use of this PE shall be unique for one 'PIN Context'." Unique per
+    context, not per package, so counting PE-PINCodes across the profile would
+    reject a legitimate one: the corpus has five, each in a different context.
+
+    Two PE-PINCodes share a context when the nearest file-system PE before each
+    is the same node, which is what generate-id compares. The context node set
+    is the same one SAIP-PIN-05 and 06 use.
+  -->
+  <sch:pattern id="pin-codes-once-per-context">
+    <sch:rule context="/ProfilePackage/ProfileElement[pinCodes]">
+      <sch:let name="ctx" value="preceding-sibling::ProfileElement[mf or cd or telecom
+                                   or usim or opt-usim or isim or opt-isim or csim
+                                   or opt-csim or phonebook or gsm-access or df-5gs
+                                   or df-saip or df-snpn or df-5gprose or eap or iot
+                                   or opt-iot or ssim or genericFileManagement][1]"/>
+
+      <sch:assert id="SAIP-PIN-07" role="error" see="saip-3.4.1#8.5.1"
+                  test="not($ctx) or not(preceding-sibling::ProfileElement[pinCodes][
+                          generate-id(preceding-sibling::ProfileElement[mf or cd or telecom
+                            or usim or opt-usim or isim or opt-isim or csim
+                            or opt-csim or phonebook or gsm-access or df-5gs
+                            or df-saip or df-snpn or df-5gprose or eap or iot
+                            or opt-iot or ssim or genericFileManagement][1])
+                          = generate-id($ctx)])">
+        Only one PE-PINCodes shall be used for one PIN context.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
 </sch:schema>

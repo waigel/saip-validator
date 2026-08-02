@@ -63,4 +63,17 @@
     </sch:rule>
   </sch:pattern>
 
+  <!--
+    8.8: "'tarList' shall include at least one TAR if available." An empty list
+    is the case this catches; an absent one is SAIP-RFM-01's business.
+  -->
+  <sch:pattern id="rfm-tarlist-nonempty">
+    <sch:rule context="/ProfilePackage/ProfileElement/rfm/tarList">
+      <sch:assert id="SAIP-RFM-03" role="error" see="saip-3.4.1#8.8"
+                  test="count(*) &gt;= 1">
+        A tarList shall include at least one TAR.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+
 </sch:schema>

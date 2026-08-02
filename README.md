@@ -98,7 +98,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-79 rules across fifteen files, each citing the clause it comes from:
+87 rules across sixteen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
@@ -117,6 +117,7 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `applications.sch` | extradition: the MNO-SD is not extradited, targets are PERSONALIZED | 8.7.3 |
 | `rfm.sch` | an RFM instance reachable over a TAR-based protocol, placed after an ADF | 8.8 |
 | `naa-parameters.sch` | NAA parameter PEs and PE-EAP placed after the NAA they configure | 8.4.1, 8.3.4.7 |
+| `aka-parameters.sch` | AKA key and OPc sizes per algorithm, SSIM-only parameters | 8.4.2 |
 
 **What is not covered.** Every normative table in Annex A has now been
 transcribed, and clause 8's subsections have all been read. What remains

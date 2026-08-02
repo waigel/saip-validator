@@ -7,7 +7,8 @@
       <unblockingPINReference>7</unblockingPINReference>
       <maxNumOfAttemps-retryNumLeft>51</maxNumOfAttemps-retryNumLeft>
     </PINConfiguration></pinconfig></pinCodes></pinCodes></ProfileElement>
-  <ProfileElement><pukCodes><puk-Header><identification>2</identification></puk-Header>
+  <ProfileElement><mf><mf-header><identification>3</identification></mf-header></mf></ProfileElement>
+    <ProfileElement><pukCodes><puk-Header><identification>2</identification></puk-Header>
     <pukCodes><PUKConfiguration><keyReference>1</keyReference>
       <pukValue>31 31 31 31 31 31 31 31</pukValue>
       <maxNumOfAttemps-retryNumLeft>170</maxNumOfAttemps-retryNumLeft>

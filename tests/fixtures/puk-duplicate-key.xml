@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ProfilePackage>
   <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
-  <ProfileElement><pukCodes><puk-Header><identification>1</identification></puk-Header>
+  <ProfileElement><mf><mf-header><identification>2</identification></mf-header></mf></ProfileElement>
+    <ProfileElement><pukCodes><puk-Header><identification>1</identification></puk-Header>
     <pukCodes>
       <PUKConfiguration><keyReference>1</keyReference><pukValue>31 31 31 31 31 31 31 31</pukValue>
         <maxNumOfAttemps-retryNumLeft>170</maxNumOfAttemps-retryNumLeft></PUKConfiguration>
