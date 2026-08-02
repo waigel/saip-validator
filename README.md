@@ -98,12 +98,13 @@ that is profiles somebody else published. The `EPT` variable names the converter
 
 ## Status
 
-87 rules across sixteen files, each citing the clause it comes from:
+98 rules across seventeen files, each citing the clause it comes from:
 
 | File | Covers | Clauses |
 | --- | --- | --- |
 | `composition.sch` | one header first, one end last, unique PE identifications, Full versus IoT Minimal | 7.4, 7.5, 8.1.3, 8.2.1, 8.10 |
-| `ordering.sch` | PE dependencies, and cardinality where it is package-level | 8.1, 8.3.4 |
+| `ordering.sch` | PE dependencies, and cardinality where it is package-level | 8.1, 8.3.4, 11.2.4 |
+| `scoped-cardinality.sch` | cardinality that is per ADF rather than per package | 8.1.3, 8.3.4 |
 | `templates.sch` | templateID against the assigned OIDs | Annex B |
 | `template-parameters.sch` | parameters a referenced template obliges the profile to supply | 9.1 |
 | `pin-puk.sch` | PIN and PUK key references, including the PUK a PIN names | 8.5.1, 8.5.2 |
@@ -119,36 +120,36 @@ that is profiles somebody else published. The `EPT` variable names the converter
 | `naa-parameters.sch` | NAA parameter PEs and PE-EAP placed after the NAA they configure | 8.4.1, 8.3.4.7 |
 | `aka-parameters.sch` | AKA key and OPc sizes per algorithm, SSIM-only parameters | 8.4.2 |
 
-**What is not covered.** Every normative table in Annex A has now been
-transcribed, and clause 8's subsections have all been read. What remains
-unchecked is unchecked for a stated reason rather than for want of reading.
+**What is not covered.** Every sentence containing "shall" was extracted from
+the specification, attributed to its clause, and given a disposition. All 265 are
+listed in [docs/audit/shall-sentences.md](docs/audit/shall-sentences.md), which
+is the evidence for this section: 69 are checked by a rule, 144 describe what the
+eUICC does rather than what a package must contain, 19 delegate to a document
+this project does not hold, 18 are not decidable from the package alone, and the
+rest are table legends or descriptive prose.
 
-Clause 8.9, non-standard content, carries no checkable requirement: it is by
-definition proprietary. Clause 8.11 defines `PEStatus` and `EUICCResponse`,
-which are what the eUICC sends *back* after installation; nothing there is an
-obligation on a profile package, so it yields no rules.
+Two are checkable and not checked, and both fail on the same obstacle. 8.1.3
+requires that the PIN key references packed into a `pinStatusTemplateDO` be
+defined in the right PIN context, global ones in the MF and local ones in a
+parent ADF or DF. The references are bytes inside an octet string, the
+PE-PINCodes `keyReference` is a decimal integer, and XPath 1.0 has no
+hex-to-decimal conversion to bridge them.
 
-Two gaps come from documents this project does not have. Classifying a file as
-ADF, DF, EF or link would be exact if byte 1 of the `fileDescriptor` were
-decoded per ETSI TS 102 222, which is referenced but not in hand; the rules in
-`generic-file-management.sch` instead use the discriminators SAIP states
-outright, which leaves `shortEFID` on a link unchecked because a DF Link forbids
-it while an EF Link permits it. For the same reason `linkPath` targets are not
-resolved.
+The other limits are unchanged and are the honest kind. Classifying a file as
+ADF, DF, EF or link would be exact if byte 1 of the `fileDescriptor` were decoded
+per ETSI TS 102 222, which is referenced but not in hand; the rules in
+`generic-file-management.sch` use the discriminators SAIP states outright
+instead, which leaves `shortEFID` on a link unchecked. PE-EAP has no cardinality
+rule because its scope is "each EAP method", which the package does not name.
 
-Deciding *which* kind of PIN reference a given PE-PINCodes ought to hold is
-caught only where the containing context makes it decidable; a package that uses
-one consistent kind throughout passes regardless of whether that kind is right
-for it.
-
-Three further rules were deliberately rejected after reading the clause they
-would have cited; see "Rules considered and rejected" in the design document.
-The ICCID in the header is not compared against EF-ICCID because 8.2.1 says that
-value "is not checked" and "is not used"; Annex A's file lists are not required
-of a profile because 9.1 says only *differences* from the template need be
-included; and PE-RFM cannot be tied to *its own* ADF because that ADF's AID is
-supplied by the template and never appears in the package. SAIP-RFM-02 checks
-the weaker half that is decidable, that some ADF precedes.
+Three rules were deliberately rejected after reading the clause they would have
+cited; see "Rules considered and rejected" in the design document. The ICCID in
+the header is not compared against EF-ICCID because 8.2.1 says that value "is not
+checked" and "is not used"; Annex A's file lists are not required of a profile
+because 9.1 says only *differences* from the template need be included; and
+PE-RFM cannot be tied to *its own* ADF because that ADF's AID is supplied by the
+template and never appears in the package. SAIP-RFM-02 checks the weaker half
+that is decidable, that some ADF precedes.
 
 ## Scope
 

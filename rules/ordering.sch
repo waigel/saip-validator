@@ -111,6 +111,25 @@
                   test="count(ProfileElement/opt-iot) &lt;= 1">
         PE-OPT-IoT may be provided at most once in a profile package.
       </sch:assert>
+
+      <!--
+        11.2.4 shows the MF built through PE-GenericFileManagement instead of
+        PE-MF and calls it "an alternative method used for creating the MF file
+        system. Only one method shall be present in a real Profile Package."
+        8.1.3 says the same from the other side: the GFM route applies "If this
+        PE is not used".
+
+        Creating the MF by the generic route means an FCP for file ID '3F00',
+        which is what Annex A's MF table gives as the MF's identifier. None of
+        the published profiles takes that route, so this rule fires on neither.
+      -->
+      <sch:assert id="SAIP-CARD-07" role="error" see="saip-3.4.1#11.2.4"
+                  test="not(ProfileElement/mf)
+                        or not(ProfileElement/genericFileManagement//createFCP[
+                                 translate(normalize-space(fileID), ' ', '') = '3F00'])">
+        The MF shall be created either by PE-MF or by PE-GenericFileManagement,
+        not by both.
+      </sch:assert>
     </sch:rule>
   </sch:pattern>
 

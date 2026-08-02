@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><genericFileManagement><gfm-header><identification>2</identification></gfm-header>
+    <fileManagementCMD><FileManagement>
+      <createFCP><fileDescriptor>78 21</fileDescriptor><fileID>3F 00</fileID>
+        <securityAttributesReferenced>2F 06 01</securityAttributesReferenced>
+        <pinStatusTemplateDO>81 01 0A</pinStatusTemplateDO></createFCP>
+    </FileManagement></fileManagementCMD>
+  </genericFileManagement></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

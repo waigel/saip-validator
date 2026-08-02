@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><isim><isim-header><identification>2</identification></isim-header></isim></ProfileElement>
+  <ProfileElement><opt-isim><opt-isim-header><identification>3</identification></opt-isim-header></opt-isim></ProfileElement>
+  <ProfileElement><opt-isim><opt-isim-header><identification>4</identification></opt-isim-header></opt-isim></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

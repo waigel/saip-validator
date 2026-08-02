@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ProfilePackage>
+  <ProfileElement><header><iccid>89 00</iccid></header></ProfileElement>
+  <ProfileElement><mf><mf-header><identification>1</identification></mf-header></mf></ProfileElement>
+  <ProfileElement><csim><csim-header><identification>2</identification></csim-header></csim></ProfileElement>
+  <ProfileElement><cdmaParameter><cdmaParameter-header><identification>3</identification></cdmaParameter-header></cdmaParameter></ProfileElement>
+  <ProfileElement><cdmaParameter><cdmaParameter-header><identification>4</identification></cdmaParameter-header></cdmaParameter></ProfileElement>
+  <ProfileElement><end><end-header><identification>99</identification></end-header></end></ProfileElement>
+</ProfilePackage>

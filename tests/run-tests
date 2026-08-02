@@ -195,6 +195,17 @@ fires_exactly aka-tuak-bad-opc.xml           SAIP-AKA-04
 fires_exactly aka-ssimparams-on-usim.xml     SAIP-AKA-05
 fires_exactly pin-two-in-one-context.xml     SAIP-PIN-07
 fires_exactly rfm-empty-tarlist.xml          SAIP-RFM-03
+fires_exactly mf-created-twice.xml           SAIP-CARD-07
+fires_exactly scoped-two-phonebook.xml       SAIP-SCP-01
+fires_exactly scoped-two-gsm-access.xml      SAIP-SCP-02
+fires_exactly scoped-two-df-5gs.xml          SAIP-SCP-03
+fires_exactly scoped-two-df-saip.xml         SAIP-SCP-04
+fires_exactly scoped-two-df-snpn.xml         SAIP-SCP-05
+fires_exactly scoped-two-df-5gprose.xml      SAIP-SCP-06
+fires_exactly scoped-two-opt-usim.xml        SAIP-SCP-07
+fires_exactly scoped-two-opt-isim.xml        SAIP-SCP-08
+fires_exactly scoped-two-opt-csim.xml        SAIP-SCP-09
+fires_exactly scoped-two-cdmaParameter.xml   SAIP-SCP-10
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
 # fires_exactly above is hardcoded per fixture, so a rule nobody wrote a
