@@ -193,6 +193,28 @@ files, and change this document at the same time.
 - Replacing `asn1vn -C`. Subtype constraints are the layer below; this one
   assumes they hold.
 
+## Rules considered and rejected
+
+Recording these matters as much as recording the rules: each looked obvious and
+each would have been wrong.
+
+**The header ICCID must match EF-ICCID.** It does match in all four published
+profiles, once you account for EF-ICCID storing the value with swapped nibbles.
+But 8.2.1 says the opposite of what the rule would assert: "For Full Profiles,
+the consistency of this value with the value provided in EF-ICCID is not checked
+by the eUICC and this value is not used by the eUICC in this version of the
+specification." A rule demanding consistency would contradict the clause it
+claimed to come from. For IoT Minimal Profiles the same clause does say the
+header value becomes the default EF-ICCID content, non-swapped and 'F'-padded per
+ITU E.118 -- that is a rule about the header value's own encoding, and it is
+still to be written.
+
+**Several PEs "shall come after the creation of the MF."** True, but the MF may
+be created either by PE-MF or by PE-GenericFileManagement, so the antecedent is
+not a single element and a naive rule would flag valid profiles that build the MF
+generically. Deferred until the generic file management PE is understood well
+enough to name the antecedent correctly.
+
 ## Follow-ups
 
 Raised by the final review of the first increment and deliberately not fixed

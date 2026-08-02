@@ -106,6 +106,20 @@ fires_exactly duplicate-identification.xml  SAIP-PEID-01
 fires_exactly full-profile-with-iot.xml     SAIP-IOT-01
 fires_exactly iot-profile-without-iot-pe.xml SAIP-IOT-02
 fires_exactly iot-profile-with-mf.xml       SAIP-IOT-03
+fires_exactly ordering-opt-usim.xml         SAIP-ORD-01
+fires_exactly ordering-opt-isim.xml         SAIP-ORD-02
+fires_exactly ordering-opt-csim.xml         SAIP-ORD-03
+fires_exactly ordering-gsm-access.xml       SAIP-ORD-04
+fires_exactly ordering-phonebook.xml        SAIP-ORD-05
+fires_exactly ordering-df-5gs.xml           SAIP-ORD-06
+fires_exactly ordering-df-saip.xml          SAIP-ORD-07
+fires_exactly ordering-df-snpn.xml          SAIP-ORD-08
+fires_exactly ordering-df-5gprose.xml       SAIP-ORD-09
+fires_exactly ordering-opt-iot.xml          SAIP-ORD-10
+fires_exactly twice-mf.xml                  SAIP-CARD-01
+fires_exactly twice-iot.xml                 SAIP-CARD-02
+fires_exactly twice-pukCodes.xml            SAIP-CARD-03
+
 
 # --- coverage: every declared rule id fires in some fixture ------------------
 #
